@@ -158,6 +158,7 @@ func ShowPerBarangMasuk(){
 	}
 
 	fmt.Println(barMas)
+	//hhahahaha
 }
 
 func Delete_barang_masuk(){
