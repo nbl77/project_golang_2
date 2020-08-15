@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"time"
@@ -59,27 +60,31 @@ func Edit_barang_masuk(){
 		jumlah_masuk int
 	)
 
-
-
 	fmt.Println("Masukkan id barang masuk")
 	fmt.Scan(&id_barang_masuk)
 
-	fmt.Println("Masukkan id barang")
-	fmt.Scan(&id_barang)
-
-	fmt.Println("Masukkan id supplier")
-	fmt.Scan(&id_supplier)
-
-	fmt.Println("Masukkan jumlah_masuk")
-	fmt.Scan(&jumlah_masuk)
-
-
-	update,err := db.Prepare("UPDATE barang_masuk SET id_barang=?, id_supplier=?, jumlah_masuk =? WHERE id_barang_masuk = ?")
-	if err != nil {
-		log.Fatalf("Terjadi error terkait edit barang masuk karena: ", err)
+	if FindBarangMasuk(id_barang_masuk) {
+		fmt.Println("Masukkan id barang")
+		fmt.Scan(&id_barang)
+	
+		fmt.Println("Masukkan id supplier")
+		fmt.Scan(&id_supplier)
+	
+		fmt.Println("Masukkan jumlah_masuk")
+		fmt.Scan(&jumlah_masuk)
+	
+	
+		update,err := db.Prepare("UPDATE barang_masuk SET id_barang=?, id_supplier=?, jumlah_masuk =? WHERE id_barang_masuk = ?")
+		if err != nil {
+			log.Fatalf("Terjadi error terkait edit barang masuk karena: ", err)
+		}
+	
+		update.Exec(id_barang,id_supplier,jumlah_masuk,id_barang_masuk)
+	} else {
+		fmt.Println("Id tidak ada")
 	}
 
-	update.Exec(id_barang,id_supplier,jumlah_masuk,id_barang_masuk)
+
 }
 
 func ShowAllBarangMasuk(){
@@ -131,6 +136,8 @@ func ShowPerBarangMasuk(){
 	fmt.Println("Masukkan id barang masuk")
 	fmt.Scan(&id_barang_masuk)
 
+	if FindBarangMasuk(id_barang_masuk) {
+
 	selDB,err := db.Query("SELECT * FROM barang_masuk WHERE id_barang_masuk = ?",id_barang_masuk)
 	if err != nil {
 		log.Fatalf("Terjadi error terkait query barang masuk by id karena error: ", err)
@@ -158,6 +165,10 @@ func ShowPerBarangMasuk(){
 	}
 
 	fmt.Println(barMas)
+	} else {
+		fmt.Println("id tidak ada")
+	}
+
 	//hhahahaha
 }
 
@@ -170,13 +181,43 @@ func Delete_barang_masuk(){
 
 	fmt.Scan(&id_barang_masuk)
 
-	
-	result,err := db.Exec("DELETE FROM barang_masuk WHERE id_barang_masuk=?", id_barang_masuk)
+
+	if FindBarangMasuk(id_barang_masuk){
+		result,err := db.Exec("DELETE FROM barang_masuk WHERE id_barang_masuk=?", id_barang_masuk)
 
 	if err!= nil {
 		log.Fatalln("Terjadi error terkait result hapus barang masuk", err)
 	}
 	fmt.Println(result)
+	} else {
+		fmt.Println("Id tidak ada")
+	}
+
+	
+	
 
 
+}
+
+
+func FindBarangMasuk(id_barang_masuk int) bool{
+	db:=dbConn()
+	defer db.Close()
+
+	row := db.QueryRow("SELECT * FROM barang_masuk WHERE id_barang_masuk = ?", id_barang_masuk)
+
+	bar := BarangMasuk{}
+	err:= row.Scan(&bar.Id_barang_masuk, &bar.Id_barang, &bar.Id_supplier, &bar.Jumlah_masuk, &bar.Waktu_masuk)
+
+	switch {
+	case err == sql.ErrNoRows:
+		// log.Fatalf("Barang dari id yang dimasukkan tidak ada di database")
+		return false
+	case err != nil:
+		log.Fatalf("Error saat mencari barang karena : ", err)
+		return false
+	}
+
+	fmt.Println(bar)
+	return true
 }

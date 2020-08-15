@@ -5,6 +5,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"time"
+	"database/sql"
 )
 
 type BarangKeluar struct {
@@ -64,22 +65,29 @@ func Edit_barang_keluar(){
 	fmt.Println("Masukkan id barang keluar")
 	fmt.Scan(&id_barang_keluar)
 
-	fmt.Println("Masukkan id barang")
-	fmt.Scan(&id_barang)
 
-	fmt.Println("Masukkan alamat")
-	fmt.Scan(&alamat)
-
-	fmt.Println("Masukkan jumlah_keluar")
-	fmt.Scan(&jumlah_keluar)
-
-
-	update,err := db.Prepare("UPDATE barang_keluar SET id_barang=?, alamat=?, jumlah_keluar =? WHERE id_barang_keluar = ?")
-	if err != nil {
-		log.Fatalf("Terjadi error terkait edit barang keluar karena: ", err)
+	if FindBarangKeluar(id_barang_keluar) {
+		fmt.Println("Masukkan id barang")
+		fmt.Scan(&id_barang)
+	
+		fmt.Println("Masukkan alamat")
+		fmt.Scan(&alamat)
+	
+		fmt.Println("Masukkan jumlah_keluar")
+		fmt.Scan(&jumlah_keluar)
+	
+	
+		update,err := db.Prepare("UPDATE barang_keluar SET id_barang=?, alamat=?, jumlah_keluar =? WHERE id_barang_keluar = ?")
+		if err != nil {
+			log.Fatalf("Terjadi error terkait edit barang keluar karena: ", err)
+		}
+	
+		update.Exec(id_barang,alamat,jumlah_keluar,id_barang_keluar)
+	} else {
+		fmt.Println("Id tidak ada")
 	}
 
-	update.Exec(id_barang,alamat,jumlah_keluar,id_barang_keluar)
+
 }
 
 func ShowAllBarangKeluar(){
@@ -125,39 +133,48 @@ func ShowPerBarangKeluar(){
 	defer db.Close()
 
 	var (
-		id_barang_masuk int
+		id_barang_keluar int
 	)
 
-	fmt.Println("Masukkan id barang masuk")
-	fmt.Scan(&id_barang_masuk)
+	fmt.Println("Masukkan id barang keluar")
+	fmt.Scan(&id_barang_keluar)
 
-	selDB,err := db.Query("SELECT * FROM barang_masuk WHERE id_barang_masuk = ?",id_barang_masuk)
-	if err != nil {
-		log.Fatalf("Terjadi error terkait query barang masuk by id karena error: ", err)
-	}
+	is_exist := FindBarangKeluar(id_barang_keluar)
 
-	barMas:= BarangMasuk{}
-
-	for selDB.Next(){
-		var id_barang_masuk1 int
-		var id_barang int
-		var id_supplier int
-		var jumlah_masuk int
-		var waktu_masuk string
-
-		err = selDB.Scan(&id_barang_masuk1, &id_barang, &id_supplier, &jumlah_masuk, &waktu_masuk)
+	if is_exist {
+		selDB,err := db.Query("SELECT * FROM barang_keluar WHERE id_barang_keluar = ?",id_barang_keluar)
 		if err != nil {
-			log.Fatalf("Terjadi error dikarenakan scan barang masuk by id", err)
+			log.Fatalf("Terjadi error terkait query barang keluar by id karena error: ", err)
 		}
+	
+		barKel:= BarangKeluar{}
+	
+		for selDB.Next(){
+			var id_barang_keluar1 int
+			var id_barang int
+			var alamat string
+			var jumlah_keluar int
+			var waktu_keluar string
+	
+			err = selDB.Scan(&id_barang_keluar1, &id_barang, &alamat, &jumlah_keluar, &waktu_keluar)
+			if err != nil {
+				log.Fatalf("Terjadi error dikarenakan scan barang masuk by id", err)
+			}
 
-		barMas.Id_barang_masuk = id_barang_masuk1
-		barMas.Id_barang = id_barang
-		barMas.Id_supplier = id_supplier
-		barMas.Jumlah_masuk = jumlah_masuk
-		barMas.Waktu_masuk = waktu_masuk
+			barKel.Id_barang_keluar = id_barang_keluar1
+			barKel.Id_barang = id_barang
+			barKel.Alamat = alamat
+			barKel.Jumlah_keluar = jumlah_keluar
+			barKel.Waktu_keluar = waktu_keluar
+			
+		}
+	
+		fmt.Println(barKel)
+	} else {
+		fmt.Println("id tidak ada")
 	}
 
-	fmt.Println(barMas)
+
 }
 
 func Delete_barang_keluar(){
@@ -169,13 +186,43 @@ func Delete_barang_keluar(){
 
 	fmt.Scan(&id_barang_keluar)
 
-	
-	result,err := db.Exec("DELETE FROM barang_keluar WHERE id_barang_keluar=?", id_barang_keluar)
+	is_exist := FindBarangKeluar(id_barang_keluar)
 
-	if err!= nil {
-		log.Fatalln("Terjadi error terkait result", err)
+	if is_exist {
+		result,err := db.Exec("DELETE FROM barang_keluar WHERE id_barang_keluar=?", id_barang_keluar)
+
+		if err!= nil {
+			log.Fatalln("Terjadi error terkait result", err)
+		}
+		fmt.Println(result)
+	} else {
+		fmt.Println("Id tidak ada")
 	}
-	fmt.Println(result)
+
+	
 
 
+
+}
+
+func FindBarangKeluar(id_barang_keluar int) bool{
+	db:=dbConn()
+	defer db.Close()
+
+	row := db.QueryRow("SELECT * FROM barang_keluar WHERE id_barang_keluar = ?", id_barang_keluar)
+
+	bar := BarangKeluar{}
+	err:= row.Scan(&bar.Id_barang_keluar, &bar.Id_barang, &bar.Alamat, &bar.Jumlah_keluar, &bar.Waktu_keluar)
+
+	switch {
+	case err == sql.ErrNoRows:
+		// log.Fatalf("Barang dari id yang dimasukkan tidak ada di database")
+		return false
+	case err != nil:
+		log.Fatalf("Error saat mencari barang karena : ", err)
+		return false
+	}
+
+	fmt.Println(bar)
+	return true
 }

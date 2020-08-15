@@ -4,6 +4,7 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
+	"database/sql"
 )
 
 
@@ -48,6 +49,8 @@ func Edit_satuan(){
 	fmt.Println("Masukkan id satuan")
 	fmt.Scan(&id_satuan)
 
+	if FindSatuan(id_satuan) {
+
 	fmt.Println("Masukkan nama satuan")
 	fmt.Scan(&nama_satuan)
 
@@ -57,6 +60,10 @@ func Edit_satuan(){
 	}
 
 	update.Exec(nama_satuan,id_satuan)
+	} else {
+		fmt.Println("Id tidak ada")
+	}
+
 }
 
 func ShowAllSatuan(){
@@ -102,27 +109,35 @@ func ShowPerSatuan(){
 	fmt.Println("Masukkan id satuan")
 	fmt.Scan(&id_satuan)
 
-	selDB,err := db.Query("SELECT * FROM satuan WHERE id_satuan = ?",id_satuan)
-	if err != nil {
-		log.Fatalf("Terjadi error terkait query satuan by id karena error: ", err)
-	}
+	is_exist := FindSatuan(id_satuan)
 
-	satu:= Satuan{}
-
-	for selDB.Next(){
-		var id_satuan1 int
-		var nama_satuan string
-
-		err = selDB.Scan(&id_satuan1, &nama_satuan)
+	if is_exist {
+		selDB,err := db.Query("SELECT * FROM satuan WHERE id_satuan = ?",id_satuan)
 		if err != nil {
-			log.Fatalf("Terjadi error dikarenakan scan satuan by id", err)
+			log.Fatalf("Terjadi error terkait query satuan by id karena error: ", err)
 		}
-
-		satu.Id_satuan = id_satuan1
-		satu.Nama_satuan = nama_satuan
+	
+		satu:= Satuan{}
+	
+		for selDB.Next(){
+			var id_satuan1 int
+			var nama_satuan string
+	
+			err = selDB.Scan(&id_satuan1, &nama_satuan)
+			if err != nil {
+				log.Fatalf("Terjadi error dikarenakan scan satuan by id", err)
+			}
+	
+			satu.Id_satuan = id_satuan1
+			satu.Nama_satuan = nama_satuan
+		}
+	
+		fmt.Println(satu)
+	} else {
+		fmt.Println("Id tidak ada")
 	}
 
-	fmt.Println(satu)
+
 }
 
 func Delete_satuan(){
@@ -133,14 +148,40 @@ func Delete_satuan(){
 	fmt.Println("Masukkan id")
 
 	fmt.Scan(&id_satuan)
-
-	
-	result,err := db.Exec("DELETE FROM satuan WHERE id_satuan=?", id_satuan)
+	if FindSatuan(id_satuan) {
+		result,err := db.Exec("DELETE FROM satuan WHERE id_satuan=?", id_satuan)
 
 	if err!= nil {
 		log.Fatalln("Terjadi error terkait result hapus satuan", err)
 	}
 	fmt.Println(result)
 
+	} else {
+		fmt.Println("Id tidak ada")
+	}
+	
 
+}
+
+
+func FindSatuan(id_satuan int) bool{
+	db:=dbConn()
+	defer db.Close()
+
+	row := db.QueryRow("SELECT * FROM satuan WHERE id_satuan = ?", id_satuan)
+
+	sat := Satuan{}
+	err:= row.Scan(&sat.Id_satuan, &sat.Nama_satuan)
+
+	switch {
+	case err == sql.ErrNoRows:
+		// log.Fatalf("Barang dari id yang dimasukkan tidak ada di database")
+		return false
+	case err != nil:
+		log.Fatalf("Error saat mencari barang karena : ", err)
+		return false
+	}
+
+	fmt.Println(sat)
+	return true
 }

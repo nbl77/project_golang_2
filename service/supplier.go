@@ -2,7 +2,7 @@ package service
 
 import (
 	"fmt"
-	// "database/sql"
+	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 )
@@ -56,6 +56,8 @@ func Edit_supplier(){
 	fmt.Println("Masukkan id supplier")
 	fmt.Scan(&id_supplier)
 
+	if FindSupplier(id_supplier) {
+
 	fmt.Println("Masukkan nama supplier")
 	fmt.Scan(&nama_supplier)
 
@@ -68,6 +70,10 @@ func Edit_supplier(){
 	}
 
 	update.Exec(nama_supplier,alamat,id_supplier)
+	} else {
+		fmt.Println("Id tidak ada")
+	}
+
 }
 
 func ShowAllSupplier(){
@@ -115,7 +121,8 @@ func ShowPerSupplier(){
 	fmt.Println("Masukkan id supplier")
 	fmt.Scan(&id_supplier)
 
-	selDB,err := db.Query("SELECT * FROM supplier WHERE id_supplier = ?",id_supplier)
+	if FindSupplier(id_supplier) {
+		selDB,err := db.Query("SELECT * FROM supplier WHERE id_supplier = ?",id_supplier)
 	if err != nil {
 		log.Fatalf("Terjadi error terkait query supplier by id karena error: ", err)
 	}
@@ -138,6 +145,11 @@ func ShowPerSupplier(){
 	}
 
 	fmt.Println(supp)
+	} else {
+		fmt.Println("Id tidak ada")
+	}
+
+	
 }
 
 func Delete_supplier(){
@@ -149,13 +161,40 @@ func Delete_supplier(){
 
 	fmt.Scan(&id_supplier)
 
-	
-	result,err := db.Exec("DELETE FROM supplier WHERE id_supplier=?", id_supplier)
+	if FindSupplier(id_supplier) {
+		result,err := db.Exec("DELETE FROM supplier WHERE id_supplier=?", id_supplier)
 
-	if err!= nil {
-		log.Fatalln("Terjadi error terkait delForm", err)
+		if err!= nil {
+			log.Fatalln("Terjadi error terkait delForm", err)
+		}
+		fmt.Println(result)
+	} else {
+		fmt.Println("Id tidak ada")
 	}
-	fmt.Println(result)
+	
 
 
+
+}
+
+func FindSupplier(id_supplier int) bool{
+	db:=dbConn()
+	defer db.Close()
+
+	row := db.QueryRow("SELECT * FROM supplier WHERE id_supplier = ?", id_supplier)
+
+	sup := Supplier{}
+	err:= row.Scan(&sup.Id_supplier, &sup.Nama_supplier, &sup.Alamat)
+
+	switch {
+	case err == sql.ErrNoRows:
+		// log.Fatalf("Barang dari id yang dimasukkan tidak ada di database")
+		return false
+	case err != nil:
+		log.Fatalf("Error saat mencari barang karena : ", err)
+		return false
+	}
+
+	fmt.Println(sup)
+	return true
 }

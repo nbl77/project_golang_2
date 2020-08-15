@@ -6,6 +6,7 @@ import (
 	"log"
 	"bufio"
 	"os"
+	"database/sql"
 )
 
 
@@ -52,17 +53,24 @@ func Edit_kategori(){
 	fmt.Println("Masukkan id kategori")
 	fmt.Scan(&id_kategori)
 
-	fmt.Println("Masukkan nama kategori")
-	scanner.Scan()
-	nama_kategori := scanner.Text()
-	fmt.Println(nama_kategori)
-
-	update,err := db.Prepare("UPDATE kategori SET nama_kategori=? WHERE id_kategori = ?")
-	if err != nil {
-		log.Fatalf("Terjadi error terkait edit kategori karena: ", err)
+	if FindKategori(id_kategori) {
+		fmt.Println("Masukkan nama kategori")
+		scanner.Scan()
+		nama_kategori := scanner.Text()
+		fmt.Println(nama_kategori)
+	
+		update,err := db.Prepare("UPDATE kategori SET nama_kategori=? WHERE id_kategori = ?")
+		if err != nil {
+			log.Fatalf("Terjadi error terkait edit kategori karena: ", err)
+		}
+	
+		update.Exec("mobil balap",id_kategori)
+	} else {
+		fmt.Println("Id tidak ada")
 	}
 
-	update.Exec("mobil balap",id_kategori)
+
+	
 }
 
 func ShowAllKategori(){
@@ -108,6 +116,10 @@ func ShowPerKategori(){
 	fmt.Println("Masukkan id kategori")
 	fmt.Scan(&id_kategori)
 
+	is_exist := FindKategori(id_kategori)
+
+	if is_exist {
+
 	selDB,err := db.Query("SELECT * FROM kategori WHERE id_kategori = ?",id_kategori)
 	if err != nil {
 		log.Fatalf("Terjadi error terkait query kategori by id karena error: ", err)
@@ -129,6 +141,10 @@ func ShowPerKategori(){
 	}
 
 	fmt.Println(kate)
+	} else {
+		fmt.Println("Id tidak ada")
+	}
+
 }
 
 func Delete_kategori(){
@@ -140,13 +156,42 @@ func Delete_kategori(){
 
 	fmt.Scan(&id_kategori)
 
-	
+	is_exist := FindKategori(id_kategori)
+
+	if is_exist == true {
+			
 	result,err := db.Exec("DELETE FROM kategori WHERE id_kategori=?", id_kategori)
 
 	if err!= nil {
 		log.Fatalln("Terjadi error terkait delForm", err)
 	}
 	fmt.Println(result)
+	} else {
+		fmt.Println("Id tidak ada")
+	}
 
 
+
+}
+
+func FindKategori(id_kategori int) bool{
+	db:=dbConn()
+	defer db.Close()
+
+	row := db.QueryRow("SELECT * FROM kategori WHERE id_kategori = ?", id_kategori)
+
+	kate := Kategori{}
+	err:= row.Scan(&kate.Id_kategori, &kate.Nama_kategori)
+
+	switch {
+	case err == sql.ErrNoRows:
+		// log.Fatalf("Barang dari id yang dimasukkan tidak ada di database")
+		return false
+	case err != nil:
+		log.Fatalf("Error saat mencari barang karena : ", err)
+		return false
+	}
+
+	fmt.Println(kate)
+	return true
 }

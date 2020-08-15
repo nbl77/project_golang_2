@@ -112,7 +112,6 @@ func main(){
 				service.Delete_barang_masuk()
 				break
 
-
 			
 				
 				
