@@ -5,6 +5,9 @@ import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
+
+
+	"net/http"
 )
 
 
@@ -17,32 +20,41 @@ type Supplier struct {
 
 
 
-func Insert_supplier(){
+func Insert_supplier(data Supplier)Message{
 	db:= dbConn()
 	defer db.Close()
-	fmt.Println("Tambah Kategori")
+	fmt.Println("Tambah Supplier")
 
 	var(
 		nama_supplier string
 		alamat string
 	)
 
-	fmt.Println("Masukkan nama supplier")
-	fmt.Scan(&nama_supplier)
-
-	fmt.Println("Masukkan alamat supplier")
-	fmt.Scan(&alamat)
+	nama_supplier = data.Nama_supplier
+	alamat = data.Alamat
 
 	insert,err := db.Prepare("INSERT INTO supplier(nama_supplier, alamat) VALUES(?,?)")
 	if err != nil {
-		log.Fatalf("Terjadi error terkait input supplier di database karena: ", err)
+		message:=Message{}
+		message.Status=string(http.StatusBadRequest)
+		message.Message = "Ada error terkait Insert supplier"
+		fmt.Println(err)
+
+		return message
 	}
 
 	insert.Exec(nama_supplier, alamat)
-	fmt.Println("Berhasil input kategori")
+	
+	message:=Message{}
+		message.Status=string(http.StatusOK)
+		message.Message = "Sukses insert supplier"
+		fmt.Println(err)
+
+		return message
+
 }
 
-func Edit_supplier(){
+func Edit_supplier(data Supplier)Message{
 	db:= dbConn()
 	defer db.Close()
 	fmt.Println("Edit Supplier")
@@ -53,30 +65,49 @@ func Edit_supplier(){
 		alamat string
 	)
 
-	fmt.Println("Masukkan id supplier")
-	fmt.Scan(&id_supplier)
+	id_supplier = data.Id_supplier
 
 	if FindSupplier(id_supplier) {
 
-	fmt.Println("Masukkan nama supplier")
-	fmt.Scan(&nama_supplier)
+	nama_supplier = data.Nama_supplier
 
-	fmt.Println("Masukkan alamat")
-	fmt.Scan(&alamat)
+	alamat = data.Alamat
 
 	update,err := db.Prepare("UPDATE supplier SET nama_supplier=?, alamat=? WHERE id_supplier = ?")
 	if err != nil {
-		log.Fatalf("Terjadi error terkait edit supplier karena: ", err)
+		message:=Message{}
+		message.Status=string(http.StatusOK)
+		message.Message = "Ada error terkait Edit supplier" + err.Error()
+
+		return message
 	}
+
 
 	update.Exec(nama_supplier,alamat,id_supplier)
+	message:=Message{}
+	message.Status=string(http.StatusOK)
+	message.Message = "Sukses edit supplier"
+	fmt.Println(err)
+
+	return message
 	} else {
-		fmt.Println("Id tidak ada")
+		message:=Message{}
+		message.Status=string(http.StatusNotFound)
+		message.Message = "Id tidak ada di database untuk edit supplier"
+	
+
+		return message
 	}
 
+	message:=Message{}
+	message.Status=string(http.StatusNotFound)
+	message.Message = "Tidak input apa apa untuk edit supplier"
+
+
+	return message
 }
 
-func ShowAllSupplier(){
+func ShowAllSupplier()[]Supplier{
 	db := dbConn()
 	defer db.Close()
 
@@ -95,7 +126,7 @@ func ShowAllSupplier(){
 
 		err = selDB.Scan(&id_supplier, &nama_supplier, &alamat)
 		if err != nil {
-			log.Fatalf("Terjadi error terkait scan Show All Supplier karena: ",err)
+			fmt.Println("Supplier List nil karena ada error saat scan " + err.Error())
 		}
 
 		supp.Id_supplier = id_supplier
@@ -105,12 +136,10 @@ func ShowAllSupplier(){
 		suppList = append(suppList, supp)
 	}
 
-	fmt.Println(suppList)
-
-
+	return suppList
 }
 
-func ShowPerSupplier(){
+func ShowPerSupplier(data Supplier)Supplier{
 	db := dbConn()
 	defer db.Close()
 
@@ -118,16 +147,17 @@ func ShowPerSupplier(){
 		id_supplier int
 	)
 
-	fmt.Println("Masukkan id supplier")
-	fmt.Scan(&id_supplier)
+	id_supplier = data.Id_supplier
+	supp:= Supplier{}
 
 	if FindSupplier(id_supplier) {
 		selDB,err := db.Query("SELECT * FROM supplier WHERE id_supplier = ?",id_supplier)
 	if err != nil {
-		log.Fatalf("Terjadi error terkait query supplier by id karena error: ", err)
+		fmt.Println("Supplier nill (per supplier) karena ada error di query ", err.Error())
+		return supp
 	}
 
-	supp:= Supplier{}
+	
 
 	for selDB.Next(){
 		var id_supplier1 int
@@ -144,34 +174,57 @@ func ShowPerSupplier(){
 		supp.Alamat = alamat
 	}
 
-	fmt.Println(supp)
+	return supp
 	} else {
-		fmt.Println("Id tidak ada")
+		fmt.Println("Supplier nill karena id tidak ada di database")
+		return supp
+		
 	}
+
+	fmt.Println("Supplier nill karena tidak input apa apa")
+	return supp
 
 	
 }
 
-func Delete_supplier(){
+func Delete_supplier(data Supplier)Message{
 	db :=dbConn()
 	defer db.Close()
 
 	var id_supplier int
-	fmt.Println("Masukkan id")
 
-	fmt.Scan(&id_supplier)
+	id_supplier = data.Id_supplier
 
 	if FindSupplier(id_supplier) {
 		result,err := db.Exec("DELETE FROM supplier WHERE id_supplier=?", id_supplier)
 
 		if err!= nil {
-			log.Fatalln("Terjadi error terkait delForm", err)
+			message:=Message{}
+		message.Status=string(http.StatusBadRequest)
+		message.Message = "Ada error saat mengeksekusi delete untuk supplier" + err.Error()
+		fmt.Println(err)
+
+		return message
 		}
+		message:=Message{}
+		message.Status=string(http.StatusOK)
+		message.Message = "Berhasil menghapus supplier"
 		fmt.Println(result)
+		return message
 	} else {
-		fmt.Println("Id tidak ada")
+		message:=Message{}
+		message.Status=string(http.StatusNotFound)
+		message.Message = "error karena id tidak ada di database"
+		
+		return message
+
 	}
-	
+
+	message:=Message{}
+	message.Status=string(http.StatusNotFound)
+	message.Message = "Ada error karena tidak input apa apa untuk delete supplier"
+
+	return message
 
 
 

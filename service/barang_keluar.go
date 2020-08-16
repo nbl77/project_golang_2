@@ -6,6 +6,9 @@ import (
 	"log"
 	"time"
 	"database/sql"
+
+
+	"net/http"
 )
 
 type BarangKeluar struct {
@@ -13,11 +16,11 @@ type BarangKeluar struct {
 	Id_barang int
 	Alamat string
 	Jumlah_keluar int
-	Waktu_keluar string
+	Waktu_keluar time.Time
 }
 
 
-func Insert_barang_keluar(){
+func Insert_barang_keluar(data BarangKeluar)Message{
 	db:= dbConn()
 	defer db.Close()
 	fmt.Println("Tambah Barang Keluar")
@@ -26,29 +29,49 @@ func Insert_barang_keluar(){
 		id_barang int
 		alamat string
 		jumlah_keluar int
+		waktu_keluar time.Time
 	)
 
-	fmt.Println("Masukkan id barang")
-	fmt.Scan(&id_barang)
+	// fmt.Println("Masukkan id barang")
+	// fmt.Scan(&id_barang)
 
-	fmt.Println("Masukkan alamat pengiriman")
-	fmt.Scan(&alamat)
+	// fmt.Println("Masukkan alamat pengiriman")
+	// fmt.Scan(&alamat)
 
-	fmt.Println("Masukkan jumlah keluar")
-	fmt.Scan(&jumlah_keluar)
+	// fmt.Println("Masukkan jumlah keluar")
+	// fmt.Scan(&jumlah_keluar)
 
-	currentTime := time.Now()
+	// currentTime := time.Now()
+
+	id_barang = data.Id_barang
+	alamat = data.Alamat
+	jumlah_keluar = data.Jumlah_keluar
+	waktu_keluar = data.Waktu_keluar
 
 	insert,err := db.Prepare("INSERT INTO barang_keluar(id_barang, alamat, jumlah_keluar, waktu_keluar) VALUES(?,?,?,?)")
 	if err != nil {
-		log.Fatalf("Terjadi error terkait input barang keluar di database karena: ", err)
+		message:=Message{}
+		message.Status=string(http.StatusBadRequest)
+		message.Message = "Ada error terkait Insert Barang Keluar"
+		fmt.Println(err)
+
+		return message
 	}
 
-	insert.Exec(id_barang, alamat, jumlah_keluar, currentTime.String())
+	message:=Message{}
+	message.Status=string(http.StatusOK)
+	message.Message = "Sukses Insert Kategori"
+
+	insert.Exec(id_barang, alamat, jumlah_keluar, waktu_keluar)
 	fmt.Println("Berhasil input barang keluar")
+
+	return message
+
+	
+
 }
 
-func Edit_barang_keluar(){
+func Edit_barang_keluar(data BarangKeluar)Message{
 	db:= dbConn()
 	defer db.Close()
 	fmt.Println("Edit Barang Masuk")
@@ -58,39 +81,56 @@ func Edit_barang_keluar(){
 		id_barang int
 		alamat string
 		jumlah_keluar int
+		waktu_keluar time.Time
 	)
 
 
 
-	fmt.Println("Masukkan id barang keluar")
-	fmt.Scan(&id_barang_keluar)
+	id_barang_keluar = data.Id_barang_keluar
 
 
 	if FindBarangKeluar(id_barang_keluar) {
-		fmt.Println("Masukkan id barang")
-		fmt.Scan(&id_barang)
-	
-		fmt.Println("Masukkan alamat")
-		fmt.Scan(&alamat)
-	
-		fmt.Println("Masukkan jumlah_keluar")
-		fmt.Scan(&jumlah_keluar)
+		id_barang = data.Id_barang
+		alamat = data.Alamat
+		jumlah_keluar = data.Jumlah_keluar
+		waktu_keluar = data.Waktu_keluar
 	
 	
-		update,err := db.Prepare("UPDATE barang_keluar SET id_barang=?, alamat=?, jumlah_keluar =? WHERE id_barang_keluar = ?")
+		update,err := db.Prepare("UPDATE barang_keluar SET id_barang=?, alamat=?, jumlah_keluar =? , waktu_keluar = ?WHERE id_barang_keluar = ?")
 		if err != nil {
-			log.Fatalf("Terjadi error terkait edit barang keluar karena: ", err)
-		}
+			message:=Message{}
+			message.Status=string(http.StatusBadRequest)
+			message.Message = "Ada error terkait Edit Barang Keluar"
+			fmt.Println(err)
 	
-		update.Exec(id_barang,alamat,jumlah_keluar,id_barang_keluar)
+			return message
+		}
+
+		message:=Message{}
+		message.Status=string(http.StatusOK)
+		message.Message = "Sukses Edit Barang Keluar"
+		update.Exec(id_barang,alamat,jumlah_keluar, waktu_keluar,id_barang_keluar)
+
+		return message
+	
 	} else {
-		fmt.Println("Id tidak ada")
+
+		message:=Message{}
+		message.Status=string(http.StatusBadRequest)
+		message.Message = "Id tidak ada"
+		
+		return message
 	}
 
+	
+	message:=Message{}
+	message.Status=string(http.StatusBadRequest)
+	message.Message = "Tidak input apa apa untuk edit barang"
+	return message
 
 }
 
-func ShowAllBarangKeluar(){
+func ShowAllBarangKeluar()[]BarangKeluar{
 	db := dbConn()
 	defer db.Close()
 
@@ -107,11 +147,12 @@ func ShowAllBarangKeluar(){
 		var id_barang int
 		var alamat string
 		var jumlah_keluar int
-		var waktu_keluar string
+		var waktu_keluar time.Time
 
 		err = selDB.Scan(&id_barang_keluar, &id_barang, &alamat, &jumlah_keluar, &waktu_keluar)
 		if err != nil {
-			log.Fatalf("Terjadi error terkait scan Show All Barang Keluar karena: ",err)
+			fmt.Println("Ada error saat scan untuk show all barang keluar karena: ", err)
+			return barangKeluarList
 		}
 
 		barangKeluar.Id_barang_keluar = id_barang_keluar
@@ -121,14 +162,16 @@ func ShowAllBarangKeluar(){
 		barangKeluar.Waktu_keluar = waktu_keluar
 
 		barangKeluarList = append(barangKeluarList, barangKeluar)
+		return barangKeluarList
 	}
 
-	fmt.Println(barangKeluarList)
+	fmt.Println("barang keluar list null karena tidak input apa apa")
+	return barangKeluarList
 
 
 }
 
-func ShowPerBarangKeluar(){
+func ShowPerBarangKeluar(data BarangKeluar)BarangKeluar{
 	db := dbConn()
 	defer db.Close()
 
@@ -136,29 +179,31 @@ func ShowPerBarangKeluar(){
 		id_barang_keluar int
 	)
 
-	fmt.Println("Masukkan id barang keluar")
-	fmt.Scan(&id_barang_keluar)
+	id_barang_keluar = data.Id_barang_keluar
 
 	is_exist := FindBarangKeluar(id_barang_keluar)
+
+	barKel:= BarangKeluar{}
 
 	if is_exist {
 		selDB,err := db.Query("SELECT * FROM barang_keluar WHERE id_barang_keluar = ?",id_barang_keluar)
 		if err != nil {
-			log.Fatalf("Terjadi error terkait query barang keluar by id karena error: ", err)
+			fmt.Println("Terjadi error saat select barang keluar berdasarkan id karena: ", err)
+			return barKel
 		}
 	
-		barKel:= BarangKeluar{}
 	
 		for selDB.Next(){
 			var id_barang_keluar1 int
 			var id_barang int
 			var alamat string
 			var jumlah_keluar int
-			var waktu_keluar string
+			var waktu_keluar time.Time
 	
 			err = selDB.Scan(&id_barang_keluar1, &id_barang, &alamat, &jumlah_keluar, &waktu_keluar)
 			if err != nil {
-				log.Fatalf("Terjadi error dikarenakan scan barang masuk by id", err)
+				fmt.Println("Terjadi error saat scan barang keluar")
+				return barKel
 			}
 
 			barKel.Id_barang_keluar = id_barang_keluar1
@@ -168,23 +213,28 @@ func ShowPerBarangKeluar(){
 			barKel.Waktu_keluar = waktu_keluar
 			
 		}
+		return barKel
 	
-		fmt.Println(barKel)
+		
 	} else {
-		fmt.Println("id tidak ada")
+		fmt.Println("Id tidak ada")
+		return barKel
+		
 	}
+
+	fmt.Println("Tidak input apa apa")
+	return barKel
 
 
 }
 
-func Delete_barang_keluar(){
+func Delete_barang_keluar(data BarangKeluar)Message{
 	db :=dbConn()
 	defer db.Close()
 
 	var id_barang_keluar int
-	fmt.Println("Masukkan id")
 
-	fmt.Scan(&id_barang_keluar)
+	id_barang_keluar = data.Id_barang_keluar
 
 	is_exist := FindBarangKeluar(id_barang_keluar)
 
@@ -192,17 +242,37 @@ func Delete_barang_keluar(){
 		result,err := db.Exec("DELETE FROM barang_keluar WHERE id_barang_keluar=?", id_barang_keluar)
 
 		if err!= nil {
-			log.Fatalln("Terjadi error terkait result", err)
+			
+		message:=Message{}
+		message.Status=string(http.StatusBadRequest)
+		message.Message = "Ada error saat mengeksekusi delete di barang keluar karena: " + err.Error()
+		fmt.Println(err)
+
+		return message
 		}
+
+		message:=Message{}
+		message.Status=string(http.StatusOK)
+		message.Message = "Berhasil delete barang keluar"
+
+		return message
+
+		//ini resultnya biar kepake
 		fmt.Println(result)
 	} else {
-		fmt.Println("Id tidak ada")
+		message:=Message{}
+		message.Status=string(http.StatusNotFound)
+		message.Message = "id tidak ditemukan"
+
+		return message
 	}
 
-	
 
+	message:=Message{}
+	message.Status=string(http.StatusNotFound)
+	message.Message = "tidak input apa apa"
 
-
+	return message
 }
 
 func FindBarangKeluar(id_barang_keluar int) bool{

@@ -14,3 +14,5 @@ func dbConn() (db *sql.DB) {
     }
     return db
 }
+
+type Model map[string]interface{}

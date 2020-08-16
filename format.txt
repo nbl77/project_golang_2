@@ -1,0 +1,63 @@
+Barang{
+  nama_barang,
+  kategori,
+  satuan
+}
+Satuan{
+  nama_satuan
+}
+Kategori{
+  nama_kategori
+}
+Supplier{
+  nama_supplier
+  alamat
+}
+Barang masuk{
+  id_barang
+  id_supplier
+  jumlah_masuk
+  waktu_masuk
+}
+Barang keluar{
+  id_barang
+  jumlah
+  alamat
+  waktu_keluar
+}
+=====================================================
+#Edit Data
+=====================================================
+Barang{
+  id_barang,
+  nama_barang,
+  kategori,
+  satuan
+}
+Satuan{
+  id_satuan,
+  nama_satuan
+}
+Kategori{
+  id_kategori,
+  nama_kategori
+}
+Supplier{
+  id_supplier
+  nama_supplier
+  alamat
+}
+Barang masuk{
+  id_barang_masuk
+  id_barang
+  id_supplier
+  jumlah_masuk
+  waktu_masuk
+}
+Barang keluar{
+  id_barang_keluar
+  id_barang
+  jumlah
+  alamat
+  waktu_keluar
+}

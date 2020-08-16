@@ -6,6 +6,9 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"time"
+
+	"github.com/labstack/echo/v4"
+	"net/http"
 )
 
 type BarangMasuk struct {
@@ -17,7 +20,7 @@ type BarangMasuk struct {
 }
 
 
-func Insert_barang_masuk(){
+func Insert_barang_masuk(c echo.Context)error{
 	db:= dbConn()
 	defer db.Close()
 	fmt.Println("Tambah Barang Masuk")
@@ -46,9 +49,11 @@ func Insert_barang_masuk(){
 
 	insert.Exec(id_barang, id_supplier, jumlah_masuk, currentTime.String())
 	fmt.Println("Berhasil input barang masuk")
+
+	return c.String(http.StatusOK,"Sukses")
 }
 
-func Edit_barang_masuk(){
+func Edit_barang_masuk(c echo.Context)error{
 	db:= dbConn()
 	defer db.Close()
 	fmt.Println("Edit Barang Masuk")
@@ -84,10 +89,11 @@ func Edit_barang_masuk(){
 		fmt.Println("Id tidak ada")
 	}
 
+	return c.String(http.StatusOK,"Sukses")
 
 }
 
-func ShowAllBarangMasuk(){
+func ShowAllBarangMasuk(c echo.Context)error{
 	db := dbConn()
 	defer db.Close()
 
@@ -122,10 +128,11 @@ func ShowAllBarangMasuk(){
 
 	fmt.Println(barangMasukList)
 
+	return c.String(http.StatusOK,"Sukses")
 
 }
 
-func ShowPerBarangMasuk(){
+func ShowPerBarangMasuk(c echo.Context) error{
 	db := dbConn()
 	defer db.Close()
 
@@ -169,10 +176,11 @@ func ShowPerBarangMasuk(){
 		fmt.Println("id tidak ada")
 	}
 
+	return c.String(http.StatusOK,"Sukses")
 	//hhahahaha
 }
 
-func Delete_barang_masuk(){
+func Delete_barang_masuk(c echo.Context)error{
 	db :=dbConn()
 	defer db.Close()
 
@@ -193,6 +201,7 @@ func Delete_barang_masuk(){
 		fmt.Println("Id tidak ada")
 	}
 
+	return c.String(http.StatusOK,"Sukses")
 	
 	
 

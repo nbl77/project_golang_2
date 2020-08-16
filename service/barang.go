@@ -5,51 +5,81 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
+	
+	"net/http"
+	
+	
 )
 
 type Barang struct {
-	Id_barang int
+	Id_barang int		
 	Nama_barang string
 	Stok int
 	Id_kategori int
 	Id_satuan int
 }
 
+type Message struct{
+	Status string
+	Message string
+}
 
-func Insert_barang(){
+
+func Insert_barang(data Barang) Message{
 	db:= dbConn()
 	defer db.Close()
 	fmt.Println("Tambah Barang")
 
-	var(
-		nama_barang string
-		stok int
-		id_kategori int
-		id_satuan int
-	)
 
-	fmt.Println("Masukkan nama barang")
-	fmt.Scan(&nama_barang)
 
-	fmt.Println("Masukkan jumlah stok")
-	fmt.Scan(&stok)
+	// var(
+	// 	nama_barang string
+	// 	stok int
+	// 	id_kategori int
+	// 	id_satuan int
+	// )
 
-	fmt.Println("Masukkan id_kategori")
-	fmt.Scan(&id_kategori)
+	// fmt.Println("Masukkan nama barang")
+	// fmt.Scan(&nama_barang)
 
-	fmt.Println("Masukkan id satuan")
-	fmt.Scan(&id_satuan)
+	// fmt.Println("Masukkan jumlah stok")
+	// fmt.Scan(&stok)
+
+	// fmt.Println("Masukkan id_kategori")
+	// fmt.Scan(&id_kategori)
+
+	// fmt.Println("Masukkan id satuan")
+	// fmt.Scan(&id_satuan)
+
+
+	nama_barang := data.Nama_barang
+	stok:= 0
+	id_kategori := data.Id_kategori
+	id_satuan := data.Id_satuan
+
 
 	insert,err := db.Prepare("INSERT INTO barang(nama_barang, stok, id_kategori, id_satuan) VALUES(?,?,?,?)")
 	if err != nil {
-		log.Fatalf("Terjadi error terkait input barang di database karena: ", err)
-	}
+		message:=Message{}
+		message.Status=string(http.StatusBadRequest)
+		message.Message = "Ada error terkait Insert Barang"
+		fmt.Println(err)
 
+		return message
+	
+
+	}
 	insert.Exec(nama_barang, stok, id_kategori, id_satuan)
-	fmt.Println("Berhasil input barang")
+
+	return Message{
+		Status: string(http.StatusOK),
+		Message : "Sukses menambahkan barang",
+
+	}
+	
 }
 
-func Edit_barang(){
+func Edit_barang(data Barang)Message{
 	db:= dbConn()
 	defer db.Close()
 	fmt.Println("Edit Barang")
@@ -62,43 +92,60 @@ func Edit_barang(){
 		id_satuan int
 	)
 
-	fmt.Println("Masukkan id barang")
-	fmt.Scan(&id_barang)
+	id_barang = data.Id_barang
 
 	if FindBarang(id_barang) {
-
-	fmt.Println("Masukkan nama barang")
-	fmt.Scan(&nama_barang)
-
-	fmt.Println("Masukkan stok")
-	fmt.Scan(&stok)
-
-	fmt.Println("Masukkan id_kategori")
-	fmt.Scan(&id_kategori)
-
-	fmt.Println("Masukkan id_satuan")
-	fmt.Scan(&id_satuan)
+	
+	nama_barang = data.Nama_barang
+	stok = data.Stok
+	id_kategori = data.Id_kategori
+	id_satuan = data.Id_satuan
 
 
 		update,err := db.Prepare("UPDATE barang SET nama_barang=?, stok=?, id_kategori =?, id_satuan =? WHERE id_barang = ?")
 		if err != nil {
-			log.Fatalf("Terjadi error terkait edit supplier karena: ", err)
+			message:=Message{}
+			message.Status=string(http.StatusBadRequest)
+			message.Message = "Ada error terkait Update Barang"
+			fmt.Println(err)
+	
+			return message
 		}
+
+		// ini ga terlalu penting, buat jaga jaga aja
 		if err == sql.ErrNoRows{
-			log.Fatalln("Row tidak ditemukan di fungsi Edit barang karena")
+			message:=Message{}
+			message.Status=string(http.StatusBadRequest)
+			message.Message = "Ada error karena row tidak ditemukan"
+			fmt.Println(err)
+	
+			return message
+		
 		}
 	
 		update.Exec(nama_barang,stok,id_kategori, id_satuan, id_barang)
 	} else {
 		fmt.Println("Id tidak ada")
 	
+		message:=Message{}
+		message.Status=string(http.StatusBadRequest)
+		message.Message = "Id tidak ada"
 
+		return message
 
 	}
 
+	message:=Message{}
+	message.Status=string(http.StatusOK)
+	message.Message = "Sukses Edit barang"
+
+	return message
+
+
+
 }
 
-func ShowAllBarang(){
+func ShowAllBarang()([]Barang,Message){
 	db := dbConn()
 	defer db.Close()
 
@@ -120,7 +167,12 @@ func ShowAllBarang(){
 
 		err = selDB.Scan(&id_barang, &nama_barang, &stok, &id_kategori, &id_satuan)
 		if err != nil {
-			log.Fatalf("Terjadi error terkait scan Show All Supplier karena: ",err)
+			message:=Message{}
+			message.Status=string(http.StatusBadRequest)
+			message.Message = "ada error terkait scan semua barang"
+	
+			return barList,message
+	
 		}
 
 		bar.Id_barang = id_barang
@@ -133,11 +185,15 @@ func ShowAllBarang(){
 	}
 
 	fmt.Println(barList)
+	message:=Message{}
+	message.Status=string(http.StatusOK)
+	message.Message = "Sukses menampilkan semua barang"
 
+	return barList,message
 
 }
 
-func ShowPerBarang(){
+func ShowPerBarang(data Barang)(Barang,Message){
 	db := dbConn()
 	defer db.Close()
 
@@ -145,13 +201,17 @@ func ShowPerBarang(){
 		id_barang int
 	)
 
-	fmt.Println("Masukkan id barang")
-	fmt.Scan(&id_barang)
+	id_barang = data.Id_barang
 
 	if FindBarang(id_barang) {
 		selDB,err := db.Query("SELECT * FROM barang WHERE id_barang = ?",id_barang)
 		if err != nil {
-			log.Fatalf("Terjadi error terkait query barang by id karena error: ", err)
+
+			message:=Message{}
+			message.Status=string(http.StatusBadRequest)
+			message.Message = "Terjadi error saat mau melakukan select semuanya di barang"
+			
+			return Barang{}, message
 		}
 	
 			bar:= Barang{}
@@ -174,10 +234,26 @@ func ShowPerBarang(){
 				bar.Id_kategori = id_kategori
 				bar.Id_satuan = id_satuan
 			}
+
+			message:=Message{}
+			message.Status=string(http.StatusOK)
+			message.Message = "Sukses Mengambil barang"
 		
-			fmt.Println(bar)
+			return bar, message
 	} else {
-		fmt.Println("Id tidak ada")
+
+		message:=Message{}
+		message.Status=string(http.StatusBadRequest)
+		message.Message = "Id tidak ada"
+	
+		return Barang{}, message
+		
+	}
+
+
+	return Barang{},Message{
+		Status:string(http.StatusBadRequest),
+		Message:"Tidak mengembalikan apa apa karena tidak menginput apa apa",
 	}
 
 
@@ -185,30 +261,54 @@ func ShowPerBarang(){
 
 }
 
-func Delete_barang(){
+func Delete_barang(data Barang) Message{
 	db :=dbConn()
 	defer db.Close()
 
 	var id_barang int
-	fmt.Println("Masukkan id")
+	// fmt.Println("Masukkan id")
 
-	fmt.Scan(&id_barang)
+	// fmt.Scan(&id_barang)
 
+	id_barang = data.Id_barang
 	is_exist:= FindBarang(id_barang)
 
 	if is_exist == true {
 		result,err := db.Exec("DELETE FROM barang WHERE id_barang=?", id_barang)
 
 		if err!= nil {
-			log.Fatalln("Terjadi error terkait delForm", err)
+			message:=Message{}
+			message.Status=string(http.StatusBadRequest)
+			message.Message = "Terjadi error saat mengeksekusi delete barang"
+
+			return message
 		}
+
+		// ini tidak penting, buat jaga jaga aja karena udah ada handlernya
+		// di atas "is_exist"
 		if err == sql.ErrNoRows{
-			log.Fatalln("Row tidak ditemukan di fungsi ShowPerBarang karena")
+			message:=Message{}
+			message.Status=string(http.StatusBadRequest)
+			message.Message = "Row tidak ditemukan"	
+
+			return message
 		}
 		fmt.Println(result)
 	} else {
-		fmt.Println("id tidak ada di database")
+
+		message:=Message{}
+		message.Status=string(http.StatusBadRequest)
+		message.Message = "Id tidak ada"	
+
+		return message
+		
 	}
+
+		message:=Message{}
+		message.Status=string(http.StatusOK)
+		message.Message = "Berhasil dihapus"	
+
+		return message
 	
 
 
