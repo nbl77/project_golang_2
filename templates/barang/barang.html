@@ -1,0 +1,134 @@
+<div class="header bg-primary pb-6">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-6 col-7">
+                    <h6 class="h2 text-white d-inline-block mb-0">Barang</h6>
+                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                        <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                            <li class="breadcrumb-item"><a href="/"><i class="fas fa-home"></i></a></li>
+                            <li class="breadcrumb-item"><a href="/barang">Data Barang</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Barang</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="col-lg-6 col-5 text-right">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <!-- Card header -->
+                <div class="card-header border-0">
+                    <div class="row">
+                        <div class="col-6">
+                            <h3 class="mb-0">Data Barang</h3>
+                        </div>
+                        <div class="col-6 text-right">
+                            <a href="#" class="btn btn-sm btn-neutral btn-round btn-icon" data-toggle="modal" data-target="#modal-barang">
+                                <span class="btn-inner--icon"><i class="fas fa-user-edit"></i></span>
+                                <span class="btn-inner--text">Tambah</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Light table -->
+                <div class="table-responsive">
+                    <table class="table align-items-center table-flush table-striped">
+                        <thead class="thead-light">
+                        <tr>
+                            <th width="5%">No</th>
+                            <th>Nama Barang</th>
+                            <th>Stok</th>
+                            <th>Kategori</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{if not .data}}
+                            <tr>
+                                <td colspan="6"><center>No data available yet</center></td>
+                            </tr>
+                        {{else}}
+                        {{range $index, $elem := .data}}
+                        <tr>
+                            <td>{{$elem.IdBarang}}</td>
+                            <td>{{$elem.NamaBarang}}</td>
+                            <td>{{$elem.Stok}} {{$elem.Satuan}}</td>
+                            <td>{{$elem.Kategori}}</td>
+                            <td class="table-actions">
+                                <a href="/edit-barang/{{$elem.IdBarang}}" class="table-action" data-toggle="tooltip" data-original-title="Edit Barang">
+                                    <i class="fas fa-user-edit"></i>
+                                </a>
+                                <a href="/delete-barang/{{$elem.IdBarang}}" class="table-action table-action-delete" data-toggle="sweet-alert" data-sweet-alert="confirm" data-title="Warning" data-message="Are you sure you want to delete?">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {{end}}
+                        {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+{{/*Modal*/}}
+<div class="modal fade" id="modal-barang" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+    <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+        <div class="modal-content">
+            <form action="/post-barang" method="POST">
+            <div class="modal-header">
+                <h6 class="modal-title" id="modal-title-default">Tambah Barang</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="barang">Nama Barang :</label>
+                    <input type="text" class="form-control form-control-sm" name="barang" placeholder="Nama barang" required>
+                </div>
+                <div class="form-group">
+                    <label for="kategori">Kategori :</label>
+                    <select name="kategori" id="kategori" class="form-control form-control-sm" required>
+                        {{if not .kategori}}
+                            <option value="" disabled selected>Tidak Ada data</option>
+                        {{else}}
+                            <option value="" disabled selected>Pilih Kategori</option>
+                            {{range $index,$elem := .kategori}}
+                                <option value="{{$elem.IdKategori}}">{{$elem.NamaKategori}}</option>
+                            {{end}}
+                        {{end}}
+                    </select>
+                </div>
+{{/*                <div class="form-group">*/}}
+{{/*                    <label for="satuan">Satuan :</label>*/}}
+{{/*                    <select name="satuan" id="satuan" class="form-control form-control-sm" required>*/}}
+{{/*                        {{if not .satuan}}*/}}
+{{/*                            <option value="" disabled selected>Tidak Ada data</option>*/}}
+{{/*                        {{else}}*/}}
+{{/*                            {{range $index,$elem := .satuan}}*/}}
+{{/*                                <option value="" disabled selected>Pilih Satuan</option>*/}}
+{{/*                                <option value="{{$elem.IdSatuan}}">{{$elem.NamaSatuan}}</option>*/}}
+{{/*                            {{end}}*/}}
+{{/*                        {{end}}*/}}
+{{/*                    </select>*/}}
+{{/*                </div>*/}}
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Simpan</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{template "footer"}}

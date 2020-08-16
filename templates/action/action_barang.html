@@ -1,0 +1,72 @@
+<div class="header bg-primary pb-6">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-6 col-7">
+                    <h6 class="h2 text-white d-inline-block mb-0">Edit Barang</h6>
+                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                        <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                            <li class="breadcrumb-item"><a href="/"><i class="fas fa-home"></i></a></li>
+                            <li class="breadcrumb-item"><a href="/barang">Data Barang</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Edit Barang</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="col-lg-6 col-5 text-right">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid mt--6 col-6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <!-- Card header -->
+                <div class="card-header border-0">
+                    <div class="row">
+                        <div class="col-6">
+                            <h3 class="mb-0">Edit Data Barang</h3>
+                        </div>
+                        <div class="col-6 text-right">
+                            <a href="/barang" class="btn btn-sm btn-neutral btn-round btn-icon">
+                                <span class="btn-inner--icon"><i class="fas fa-arrow-left"></i></span>
+                                <span class="btn-inner--text">Kembali</span>
+                            </a>
+                        </div>
+                    </div>
+                    {{$IdKategori := .data.Kategori}}
+                    {{$IdSatuan := .data.Satuan}}
+                    <div class="card-body">
+                        <form action="/edit-barang-action/{{.data.IdBarang}}" method="post">
+                            <div class="form-group">
+                                <label for="barang">Nama Barang :</label>
+                                <input type="text" class="form-control form-control-sm" name="barang" value="{{.data.NamaBarang}}" placeholder="Nama barang" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="kategori">Kategori :</label>
+                                <select name="kategori" id="kategori" class="form-control form-control-sm" required>
+                                    {{if not .kategori}}
+                                        <option value="" disabled selected>Tidak Ada data</option>
+                                    {{else}}
+                                        <option value="" disabled>Pilih Kategori</option>
+                                        {{range $index,$elem := .kategori}}
+                                            <option value="{{$elem.IdKategori}}" {{if eq $elem.IdKategori $IdKategori}}selected{{end}}>{{$elem.NamaKategori}}</option>
+                                        {{end}}
+                                    {{end}}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+{{template "footer"}}
