@@ -1,0 +1,192 @@
+<div class="header bg-primary pb-6">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-6 col-7">
+                    <h6 class="h2 text-white d-inline-block mb-0">Options</h6>
+                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                        <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                            <li class="breadcrumb-item"><a href="/"><i class="fas fa-home"></i></a></li>
+                            <li class="breadcrumb-item"><a href="/barang">Data Barang</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Options</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="col-lg-6 col-5 text-right">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <!-- Card header -->
+                <div class="card-header border-0">
+                    <div class="row">
+                        <div class="col-6">
+                            <h3 class="mb-0">Satuan Barang</h3>
+                        </div>
+                        <div class="col-6 text-right">
+                            <a href="#" class="btn btn-sm btn-neutral btn-round btn-icon" data-toggle="modal" data-target="#modal-satuan">
+                                <span class="btn-inner--icon"><i class="fas fa-user-edit"></i></span>
+                                <span class="btn-inner--text">Tambah</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Light table -->
+                <div class="table-responsive">
+                    <table class="table align-items-center table-flush table-striped">
+                        <thead class="thead-light">
+                        <tr>
+                            <th width="5%">No</th>
+                            <th>Nama Satuan</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{if not .satuan}}
+                        <tr>
+                            <td colspan="3"><center>No data available yet</center></td>
+                        </tr>
+                        {{else}}
+                        {{range $index,$elem := .satuan}}
+                        <tr>
+                            <td class="index">{{$index}}</td>
+                            <td>{{$elem.NamaSatuan}}</td>
+                            <td class="table-actions">
+                                <a href="/edit-satuan/{{$elem.IdSatuan}}" class="table-action" data-toggle="tooltip" data-original-title="Edit Satuan">
+                                    <i class="fas fa-user-edit"></i>
+                                </a>
+                                <a href="/delete-satuan/{{$elem.IdSatuan}}" class="table-action table-action-delete" data-toggle="sweet-alert" data-sweet-alert="confirm" data-title="Warning" data-message="Are you sure you want to delete?">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {{end}}
+                        {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <!-- Card header -->
+                <div class="card-header border-0">
+                    <div class="row">
+                        <div class="col-6">
+                            <h3 class="mb-0">Kategori Barang</h3>
+                        </div>
+                        <div class="col-6 text-right">
+                            <a href="#" class="btn btn-sm btn-neutral btn-round btn-icon" data-toggle="modal" data-target="#modal-kategori">
+                                <span class="btn-inner--icon"><i class="fas fa-user-edit"></i></span>
+                                <span class="btn-inner--text">Tambah</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Light table -->
+                <div class="table-responsive">
+                    <table class="table align-items-center table-flush table-striped">
+                        <thead class="thead-light">
+                        <tr>
+                            <th width="5%">No</th>
+                            <th>Nama Kategori</th>
+                            <th>Nama Satuan</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{if not .kategori}}
+                        <tr>
+                            <td colspan="4"><center>No data available yet</center></td>
+                        </tr>
+                        {{else}}
+                        {{range $index,$elem := .kategori}}
+                        <tr>
+                            <td class="index">{{$index}}</td>
+                            <td>{{$elem.NamaKategori}}</td>
+                            <td>{{$elem.Satuan}}</td>
+                            <td class="table-actions">
+                                <a href="/edit-kategori/{{$elem.IdKategori}}" class="table-action" data-toggle="tooltip" data-original-title="Edit Kategori">
+                                    <i class="fas fa-user-edit"></i>
+                                </a>
+                                <a href="/delete-kategori/{{$elem.IdKategori}}" class="table-action table-action-delete" data-toggle="sweet-alert" data-sweet-alert="confirm" data-title="Warning" data-message="Are you sure you want to delete?">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {{end}}
+                        {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{{/*Modal*/}}
+<div class="modal fade" id="modal-kategori" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+    <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+        <div class="modal-content">
+            <form action="/post-kategori" method="post">
+            <div class="modal-header">
+                <h6 class="modal-title" id="modal-title-default">Tambah Kategori</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="kategori">Nama Kategori :</label>
+                    <input type="text" class="form-control form-control-sm" placeholder="Nama Kategori" name="kategori" required>
+                </div>
+                <div class="form-group">
+                    <label for="satuan">Satuan :</label>
+                    <select name="satuan" id="satuan" class="form-control form-control-sm" required>
+                        {{if not .satuan}}
+                            <option value="" disabled selected>Tidak Ada data</option>
+                        {{else}}
+                            {{range $index,$elem := .satuan}}
+                                <option value="{{$elem.IdSatuan}}">{{$elem.NamaSatuan}}</option>
+                            {{end}}
+                        {{end}}
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Simpan</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-satuan" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+    <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+        <div class="modal-content">
+            <form action="/post-satuan" method="post">
+            <div class="modal-header">
+                <h6 class="modal-title" id="modal-title-default">Tambah Satuan</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="barang">Nama Satuan :</label>
+                    <input type="text" name="satuan" class="form-control form-control-sm" placeholder="Nama Satuan" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Simpan</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{template "footer"}}

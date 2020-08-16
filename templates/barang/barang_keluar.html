@@ -1,0 +1,142 @@
+<div class="header bg-primary pb-6">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-6 col-7">
+                    <h6 class="h2 text-white d-inline-block mb-0">Barang Keluar</h6>
+                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                        <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                            <li class="breadcrumb-item"><a href="/"><i class="fas fa-home"></i></a></li>
+                            <li class="breadcrumb-item"><a href="/barang">Data Barang</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Barang Keluar</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="col-lg-6 col-5 text-right">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <!-- Card header -->
+                <div class="card-header border-0">
+                    <div class="row">
+                        <div class="col-6">
+                            <h3 class="mb-0">Data Barang Keluar</h3>
+                        </div>
+                        <div class="col-6 text-right">
+                            <a href="#" class="btn btn-sm btn-neutral btn-round btn-icon" data-toggle="modal" data-target="#modal-barang-keluar">
+                                <span class="btn-inner--icon"><i class="fas fa-user-edit"></i></span>
+                                <span class="btn-inner--text">Tambah Barang Keluar</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Light table -->
+                <div class="table-responsive">
+                    <table class="table align-items-center table-flush table-striped">
+                        <thead class="thead-light">
+                        <tr>
+                            <th width="5%">No</th>
+                            <th>Nama Barang</th>
+                            <th>Tujuan</th>
+                            <th>Jumlah</th>
+                            <th>Tanggal Keluar</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>2</td>
+                            <td>Air Mineral</td>
+                            <td>CV. Jono</td>
+                            <td>50</td>
+                            <td>18-august-2020</td>
+                            <td class="table-actions">
+                                <a href="#!" class="table-action" data-toggle="tooltip" data-original-title="Edit product">
+                                    <i class="fas fa-user-edit"></i>
+                                </a>
+                                <a href="/" class="table-action table-action-delete" data-toggle="sweet-alert" data-sweet-alert="confirm" data-title="Warning" data-message="Are you sure you want to delete?">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Air Mineral</td>
+                            <td>CV. Jono</td>
+                            <td>50</td>
+                            <td>18-august-2020</td>
+                            <td class="table-actions">
+                                <a href="#!" class="table-action" data-toggle="tooltip" data-original-title="Edit product">
+                                    <i class="fas fa-user-edit"></i>
+                                </a>
+                                <a href="#!" class="table-action table-action-delete" data-toggle="tooltip" data-original-title="Delete product">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Air Mineral</td>
+                            <td>CV. Jono</td>
+                            <td>50</td>
+                            <td>18-august-2020</td>
+                            <td class="table-actions">
+                                <a href="#!" class="table-action" data-toggle="tooltip" data-original-title="Edit product">
+                                    <i class="fas fa-user-edit"></i>
+                                </a>
+                                <a href="#!" class="table-action table-action-delete" data-toggle="tooltip" data-original-title="Delete product">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{{/*Modal*/}}
+<div class="modal fade" id="modal-barang-keluar" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+    <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="modal-title-default">Tambah Barang</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="">
+                    <div class="form-group">
+                        <label for="barang">Nama Barang :</label>
+                        <select class="form-control form-control-sm" name="barang">
+                          <option value="minuman">Minuman</option>
+                          <option value="material">Material</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="jumlah">Jumlah :</label>
+                        <input type="number" class="form-control form-control-sm" id="jumlah" placeholder="Jumlah barang">
+                    </div>
+                    <div class="form-group">
+                        <label for="tujuan">Tujuan :</label>
+                        <input type="text" class="form-control form-control-sm" id="tujuan" placeholder="Tujuan barang">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">Simpan</button>
+            </div>
+        </div>
+    </div>
+</div>
+{{template "footer"}}
