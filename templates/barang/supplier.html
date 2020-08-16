@@ -44,54 +44,38 @@
                         <tr>
                             <th width="5%">No</th>
                             <th>Nama Supplier</th>
+                            <th>No Telepon</th>
+                            <th>Alamat</th>
                             <th>Total Pemasukan</th>
                             <th>Terakahir Memasukan</th>
                             <th></th>
                         </tr>
                         </thead>
                         <tbody>
+                        {{if not .data}}
                         <tr>
-                            <td>1</td>
-                            <td>CV. JONO</td>
-                            <td>50</td>
+                            <td colspan="7"><center>No data available yet</center></td>
+                        </tr>
+                        {{else}}
+                        {{range $index,$elem := .data}}
+                        <tr>
+                            <td class="index">{{$index}}</td>
+                            <td>{{$elem.NamaSupplier}}</td>
+                            <td>{{$elem.NoTelp}}</td>
+                            <td>{{$elem.Alamat}}</td>
+                            <td>0</td>
                             <td>18-10-2020</td>
                             <td class="table-actions">
-                                <a href="#!" class="table-action" data-toggle="tooltip" data-original-title="Edit product">
+                                <a href="/edit-supplier/{{$elem.IdSupplier}}" class="table-action" data-toggle="tooltip" data-original-title="Edit Supplier">
                                     <i class="fas fa-user-edit"></i>
                                 </a>
-                                <a href="#!" class="table-action table-action-delete" data-toggle="tooltip" data-original-title="Delete product">
+                                <a href="/delete-supplier/{{$elem.IdSupplier}}" class="table-action table-action-delete" data-toggle="sweet-alert" data-sweet-alert="confirm" data-title="Warning" data-message="Are you sure you want to delete?">
                                     <i class="fas fa-trash"></i>
                                 </a>
                             </td>
                         </tr>
-                        <tr>
-                            <td>1</td>
-                            <td>CV. JONO</td>
-                            <td>50</td>
-                            <td>18-10-2020</td>
-                            <td class="table-actions">
-                                <a href="#!" class="table-action" data-toggle="tooltip" data-original-title="Edit product">
-                                    <i class="fas fa-user-edit"></i>
-                                </a>
-                                <a href="#!" class="table-action table-action-delete" data-toggle="tooltip" data-original-title="Delete product">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td>CV. JONO</td>
-                            <td>50</td>
-                            <td>18-10-2020</td>
-                            <td class="table-actions">
-                                <a href="#!" class="table-action" data-toggle="tooltip" data-original-title="Edit product">
-                                    <i class="fas fa-user-edit"></i>
-                                </a>
-                                <a href="#!" class="table-action table-action-delete" data-toggle="tooltip" data-original-title="Delete product">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
+                        {{end}}
+                        {{end}}
                         </tbody>
                     </table>
                 </div>

@@ -121,7 +121,7 @@ func ShowEditKategori(ctx echo.Context) error {
 		return ctx.Redirect(http.StatusFound,"/options")
 	}
 	data := &config.M{
-		"title":      "Edit Data Barang",
+		"title":      "Edit Data Kategori",
 		"path":       "barang",
 		"alert":      cookie_conf.CookieExist(ctx, "alert"),
 		"alert_data": cookie_conf.GetCookieAlert(ctx),
@@ -164,7 +164,7 @@ func ShowEditSatuan(ctx echo.Context) error {
 		return ctx.Redirect(http.StatusFound,"/options")
 	}
 	data := &config.M{
-		"title":      "Edit Data Barang",
+		"title":      "Edit Data Satuan",
 		"path":       "barang",
 		"alert":      cookie_conf.CookieExist(ctx, "alert"),
 		"alert_data": cookie_conf.GetCookieAlert(ctx),

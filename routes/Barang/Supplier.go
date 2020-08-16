@@ -3,10 +3,11 @@ package Barang
 import (
 	"Inventory_Project/config"
 	"Inventory_Project/cookie_conf"
-	db2 "Inventory_Project/db"
-	"fmt"
+	"Inventory_Project/db/service"
 	"github.com/labstack/echo/v4"
+	"log"
 	"net/http"
+	"strconv"
 )
 type Supplier struct {
 	Id_supplier int
@@ -16,9 +17,11 @@ type Supplier struct {
 }
 
 func SupplierMaster(ctx echo.Context) error {
+	data_supplier := service.ShowAllSupplier()
 	data := &config.M{
 		"title": "Supplier",
 		"path": "supplier",
+		"data":data_supplier,
 		"alert":      cookie_conf.CookieExist(ctx, "alert"),
 		"alert_data": cookie_conf.GetCookieAlert(ctx),
 	}
@@ -28,16 +31,21 @@ func SupplierMaster(ctx echo.Context) error {
 }
 func PostSupplier(ctx echo.Context) error {
 
-	data := Supplier{
-		Nama_supplier: ctx.FormValue("supplier"),
-		Alamat:        ctx.FormValue("alamat"),
-		NoTelp: ctx.FormValue("no_telp"),
+	data := service.Supplier{
+		NamaSupplier: ctx.FormValue("supplier"),
+		Alamat:       ctx.FormValue("alamat"),
+		NoTelp:       ctx.FormValue("no_telp"),
 	}
-	if data.Nama_supplier == "" || data.Alamat == "" || data.NoTelp == ""{
+	_,err := strconv.Atoi(data.NoTelp)
+	if err != nil {
+		cookie_conf.SetCookieAlert(ctx,"danger","Tidak dapat memproses data!")
+		return ctx.Redirect(http.StatusFound,"/supplier")
+	}
+	if data.NamaSupplier == "" || data.Alamat == "" || data.NoTelp == ""{
 		cookie_conf.SetCookieAlert(ctx,"danger","Field Tidak Boleh Kosong!")
 		return ctx.Redirect(http.StatusFound,"/supplier")
 	}
-	mess := InsertSupplier(data)
+	mess := service.InsertSupplier(data)
 	if mess.Status == http.StatusOK {
 		cookie_conf.SetCookieAlert(ctx,"success","Berhasil Menambah Supplier!")
 		return ctx.Redirect(http.StatusFound,"/supplier")
@@ -45,35 +53,59 @@ func PostSupplier(ctx echo.Context) error {
 	cookie_conf.SetCookieAlert(ctx,"danger","Gagal Menambah Supplier!")
 	return ctx.Redirect(http.StatusFound,"/supplier")
 }
-func InsertSupplier(data Supplier)Message{
-	db:= db2.Connect()
-	defer db.Close()
-	fmt.Println("Tambah Supplier")
-
-	var(
-		nama_supplier string
-		alamat string
-		no_telp string
-	)
-	nama_supplier = data.Nama_supplier
-	alamat = data.Alamat
-	no_telp = data.NoTelp
-	insert,err := db.Prepare("INSERT INTO supplier(nama_supplier, alamat, no_telp) VALUES(?,?,?)")
-	if err != nil {
-		message:=Message{}
-		message.Status=string(http.StatusBadRequest)
-		message.Message = "Ada error terkait Insert supplier"
-		fmt.Println(err)
-		return message
+func DeleteSupplier(ctx echo.Context) error {
+	data := service.Supplier{IdSupplier: ctx.Param("id")}
+	mess := service.DeleteSupplier(data)
+	if mess.Status == http.StatusOK {
+		cookie_conf.SetCookieAlert(ctx,"success","Berhasil Menghapus Supplier!")
+		log.Println("Menghapus Data Supplier")
+		return ctx.Redirect(http.StatusFound,"/supplier")
 	}
+	cookie_conf.SetCookieAlert(ctx,"danger","Gagal Menghapus Supplier!")
+	return ctx.Redirect(http.StatusFound,"/supplier")
+}
+func ShowEditSupplier(ctx echo.Context) error {
+	dataSup := service.Supplier{
+		IdSupplier: ctx.Param("id"),
+	}
+	mess := service.ShowPerSupplier(dataSup)
+	if mess.IdSupplier == "" {
+		cookie_conf.SetCookieAlert(ctx,"danger","Supplier Tidak ditemukan!")
+		return ctx.Redirect(http.StatusFound,"/supplier")
+	}
+	data := &config.M{
+		"title":      "Edit Data Supplier",
+		"path":       "barang",
+		"alert":      cookie_conf.CookieExist(ctx, "alert"),
+		"alert_data": cookie_conf.GetCookieAlert(ctx),
+		"supplier":mess,
+	}
+	ctx.Render(http.StatusOK,"header",data)
+	ctx.Render(http.StatusOK,"sidenav",data)
+	return ctx.Render(http.StatusOK,"action_supplier.html",data)
+}
+func EditSupplier(ctx echo.Context) error {
+	IdSupplier := ctx.Param("id")
+	NamaSupplier := ctx.FormValue("supplier")
+	NoTelp := ctx.FormValue("no_telp")
+	Alamat := ctx.FormValue("alamat")
 
-	insert.Exec(nama_supplier, alamat, no_telp)
-
-	message:=Message{}
-	message.Status=http.StatusOK
-	message.Message = "Sukses insert supplier"
-	fmt.Println(err)
-
-	return message
-
+	if NamaSupplier == "" || NoTelp == "" || Alamat == ""{
+		cookie_conf.SetCookieAlert(ctx,"danger","Field Tidak Boleh Kosong!")
+		return ctx.Redirect(http.StatusFound,"/supplier")
+	}
+	data := service.Supplier{
+		IdSupplier: IdSupplier,
+		NamaSupplier: NamaSupplier,
+		NoTelp: NoTelp,
+		Alamat: Alamat,
+	}
+	mess := service.EditSupplier(data)
+	if mess.Status == http.StatusOK{
+		cookie_conf.SetCookieAlert(ctx,"success","Berhasil Mengubah Supplier!")
+		log.Println("Mengubah Data Supplier")
+		return ctx.Redirect(http.StatusFound,"/supplier")
+	}
+	cookie_conf.SetCookieAlert(ctx,"danger","Gagal Mengubah Supplier!")
+	return ctx.Redirect(http.StatusFound,"/supplier")
 }

@@ -1,10 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<div class="header bg-primary pb-6">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-6 col-7">
+                    <h6 class="h2 text-white d-inline-block mb-0">Edit Supplier</h6>
+                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                        <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                            <li class="breadcrumb-item"><a href="/"><i class="fas fa-home"></i></a></li>
+                            <li class="breadcrumb-item"><a href="/supplier">Data Supplier</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Edit Supplier</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="col-lg-6 col-5 text-right">
 
-</body>
-</html>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid mt--6 col-6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <!-- Card header -->
+                <div class="card-header border-0">
+                    <div class="row">
+                        <div class="col-6">
+                            <h3 class="mb-0">Edit Supplier</h3>
+                        </div>
+                        <div class="col-6 text-right">
+                            <a href="/options" class="btn btn-sm btn-neutral btn-round btn-icon">
+                                <span class="btn-inner--icon"><i class="fas fa-arrow-left"></i></span>
+                                <span class="btn-inner--text">Kembali</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form action="/edit-supplier-action/{{.supplier.IdSupplier}}" method="post">
+                            <div class="form-group">
+                                <label for="supplier">Nama Supplier :</label>
+                                <input type="text" class="form-control form-control-sm" value="{{.supplier.NamaSupplier}}" name="supplier" placeholder="Nama Supplier" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="no_telp">No Telepon :</label>
+                                <input type="number" class="form-control form-control-sm" name="no_telp" value="{{.supplier.NoTelp}}" placeholder="Nomor Telpon" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="alamat">Alamat :</label>
+                                <textarea name="alamat" id="alamat" cols="20" rows="5" class="form-control form-control-sm">{{.supplier.Alamat}}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+{{template "footer"}}
