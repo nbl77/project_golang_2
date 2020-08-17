@@ -30,7 +30,7 @@
                             <h3 class="mb-0">Data Barang</h3>
                         </div>
                         <div class="col-6 text-right">
-                            <a href="#" class="btn btn-sm btn-neutral btn-round btn-icon" data-toggle="modal" data-target="#modal-barang">
+                            <a href="#modal-barang" class="btn btn-sm btn-neutral btn-round btn-icon" data-toggle="modal" data-target="#modal-barang">
                                 <span class="btn-inner--icon"><i class="fas fa-user-edit"></i></span>
                                 <span class="btn-inner--text">Tambah</span>
                             </a>
@@ -88,7 +88,7 @@
 </div>
 
 {{/*Modal*/}}
-<div class="modal fade" id="modal-barang" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+<div class="modal fade" id="modal-barang" tabindex="-1" role="dialog" aria-labelledby="modal-barang" aria-hidden="true">
     <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
         <div class="modal-content">
             <form action="/post-barang" method="POST">
@@ -115,20 +115,8 @@
                             {{end}}
                         {{end}}
                     </select>
+                    <a href="/options"><small>Tambah Kategori</small></a>
                 </div>
-{{/*                <div class="form-group">*/}}
-{{/*                    <label for="satuan">Satuan :</label>*/}}
-{{/*                    <select name="satuan" id="satuan" class="form-control form-control-sm" required>*/}}
-{{/*                        {{if not .satuan}}*/}}
-{{/*                            <option value="" disabled selected>Tidak Ada data</option>*/}}
-{{/*                        {{else}}*/}}
-{{/*                            {{range $index,$elem := .satuan}}*/}}
-{{/*                                <option value="" disabled selected>Pilih Satuan</option>*/}}
-{{/*                                <option value="{{$elem.IdSatuan}}">{{$elem.NamaSatuan}}</option>*/}}
-{{/*                            {{end}}*/}}
-{{/*                        {{end}}*/}}
-{{/*                    </select>*/}}
-{{/*                </div>*/}}
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-primary">Simpan</button>

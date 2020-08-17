@@ -12,8 +12,8 @@ func Home(ctx echo.Context) error {
 	var totalBarangMasuk int
 	var totalBarangKeluar int
 	rowBarang := db.Select("SELECT SUM(stok) FROM barang")
-	rowBarangMasuk := db.Select("SELECT SUM(jumlah_masuk) FROM barang")
-	rowBarangKeluar := db.Select("SELECT SUM(jumlah_keluar) FROM barang")
+	rowBarangMasuk := db.Select("SELECT SUM(jumlah_masuk) FROM barang_masuk")
+	rowBarangKeluar := db.Select("SELECT SUM(jumlah_keluar) FROM barang_keluar")
 	rowBarang.Scan(&totalBarang)
 	rowBarangMasuk.Scan(&totalBarangMasuk)
 	rowBarangKeluar.Scan(&totalBarangKeluar)
