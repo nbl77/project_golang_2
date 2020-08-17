@@ -2,6 +2,7 @@ package Dashboard
 
 import (
 	"Inventory_Project/config"
+	"Inventory_Project/cookie_conf"
 	"Inventory_Project/db"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -23,6 +24,8 @@ func Home(ctx echo.Context) error {
 		"total_barang": totalBarang,
 		"total_barang_masuk": totalBarangMasuk,
 		"total_barang_keluar": totalBarangKeluar,
+		"alert":      cookie_conf.CookieExist(ctx, "alert"),
+		"alert_data": cookie_conf.GetCookieAlert(ctx),
 	}
 	ctx.Render(http.StatusOK,"header",data)
 	ctx.Render(http.StatusOK,"sidenav",data)

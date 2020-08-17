@@ -32,6 +32,20 @@ func LoginPost(ctx echo.Context) error {
 	}
 	return ctx.Redirect(http.StatusFound,"/login")
 }
+func ChangePass(ctx echo.Context) error {
+	oldPass := toMD5(ctx.FormValue("old-pass"))
+	newPass := toMD5(ctx.FormValue("new-pass"))
+	row := db.SelectParam("SELECT count(*) FROM admin WHERE password=?",oldPass)
+	var result int
+	row.Scan(&result)
+	if result > 0 {
+		db.Execute("UPDATE admin SET password=?",newPass)
+		cookie_conf.SetCookieAlert(ctx,"success","Berhasil Merubah Password!")
+		return ctx.Redirect(http.StatusFound,"/logout")
+	}
+	cookie_conf.SetCookieAlert(ctx,"danger","Password Yang Anda Masukan Salah!")
+	return ctx.Redirect(http.StatusFound,"/")
+}
 func toMD5(text string) string {
 	hash := md5.Sum([]byte(text))
 	return hex.EncodeToString(hash[:])

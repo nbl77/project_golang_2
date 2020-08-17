@@ -96,7 +96,7 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label for="barang">Nama Barang :</label>
-                    <select class="form-control form-control-sm" name="barang">
+                    <select class="form-control form-control-sm" id="barang" name="barang">
                         {{if not .barang}}
                             <option value="" selected disabled>Tidak Ada Data</option>
                         {{else}}
@@ -108,12 +108,17 @@
                     </select>
                 </div>
                 <div class="form-group">
+                    <label for="stok_barang">Stok Barang :</label>
+                    <input type="number" id="stok_barang" disabled class="form-control form-control-sm" value="0">
+                    <small class="text-danger" id="alert-stok">Jumlah Barang Melebihi Stok</small>
+                </div>
+                <div class="form-group">
                     <label for="tanggal_keluar">Tanggal Keluar :</label>
                     <input type="date" name="tanggal_keluar" class="form-control form-control-sm" id="tanggal_keluar" placeholder="Masukan Tanggal Keluar" required>
                 </div>
                 <div class="form-group">
                     <label for="jumlah">Jumlah :</label>
-                    <input type="number" class="form-control form-control-sm" id="jumlah" name="jumlah" placeholder="Jumlah barang">
+                    <input type="number" id="jumlah" class="form-control form-control-sm" id="jumlah" name="jumlah" placeholder="Jumlah barang">
                 </div>
                 <div class="form-group">
                     <label for="tujuan">Tujuan :</label>

@@ -136,13 +136,7 @@ func PostBarang(ctx echo.Context) error {
 	var id_barang int
 	row := db.Select("SELECT count(*) FROM barang")
 	row.Scan(&id_barang)
-	var data = []interface{} {
-		id_barang + 1,
-		barang,
-		0,
-		kategori,
-	}
-	res,err := db.Execute("INSERT INTO barang(id_barang,nama_barang,stok,id_kategori) VALUES(?,?,?,?)",data)
+	res,err := db.Execute("INSERT INTO barang(id_barang,nama_barang,id_kategori) VALUES(?,?,?)",id_barang + 1,barang,kategori)
 	if err != nil {
 		log.Println(err)
 	}
@@ -161,10 +155,19 @@ func DeleteBarang(ctx echo.Context) error {
 	}
 	if res > 0 {
 		res, err = db.Execute("UPDATE barang SET id_barang = id_barang - 1 WHERE id_barang > ?",ctx.Param("id"))
+		db.Execute("DELETE FROM barang_masuk WHERE id_barang=?",ctx.Param("id"))
+		db.Execute("DELETE FROM barang_keluar WHERE id_barang=?",ctx.Param("id"))
 		cookie_conf.SetCookieAlert(ctx,"success","Berhasil Menghapus data!")
 		log.Println("Menghapus Data Barang")
 		return ctx.Redirect(http.StatusFound,"/barang")
 	}
 	cookie_conf.SetCookieAlert(ctx,"danger","Gagal Menghapus data!")
 	return ctx.Redirect(http.StatusFound,"/barang")
+}
+func GetSingle(ctx echo.Context) error {
+	idBarang := ctx.Param("id")
+	barang := new(Barang)
+	row := db.SelectParam("SELECT * FROM barang WHERE id_barang=?",idBarang)
+	row.Scan(&barang.IdBarang,&barang.NamaBarang,&barang.Stok,&barang.Kategori)
+	return ctx.JSON(http.StatusOK,barang)
 }

@@ -100,6 +100,7 @@ func Routes(e *echo.Echo)  {
 	e.GET("/barang-masuk",Barang.Masuk)
 	e.GET("/barang-keluar",Barang.Keluar)
 	e.GET("/supplier",Barang.SupplierMaster)
+	e.GET("/get-single-barang/:id",Barang.GetSingle)
 	//POST
 	e.POST("/post-barang",Barang.PostBarang)
 	e.POST("/post-satuan",Barang.PostSatuan)
@@ -107,6 +108,7 @@ func Routes(e *echo.Echo)  {
 	e.POST("/post-supplier",Barang.PostSupplier)
 	e.POST("/post-barang-masuk",Barang.PostbarangMasuk)
 	e.POST("/post-barang-keluar",Barang.PostbarangKeluar)
+	e.POST("/post-change-pass",Auth.ChangePass)
 	//EDIT
 	e.GET("/edit-barang/:id",Barang.ShowEditBarang)
 	e.GET("/edit-satuan/:id",Barang.ShowEditSatuan)
