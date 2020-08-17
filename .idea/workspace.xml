@@ -20,6 +20,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0f33d033-d82d-4d75-92b5-ce0844744bb8" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/action/action_barang.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/action/action_barang.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/action/action_barang_keluar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/action/action_barang_keluar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/action/action_barang_masuk.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/action/action_barang_masuk.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/action/action_kategori.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/action/action_kategori.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/action/action_satuan.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/action/action_satuan.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/action/action_supplier.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/action/action_supplier.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/tmpl/side_nav.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/tmpl/side_nav.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
