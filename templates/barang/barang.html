@@ -59,8 +59,14 @@
                         <tr>
                             <td>{{$elem.IdBarang}}</td>
                             <td>{{$elem.NamaBarang}}</td>
-                            <td>{{$elem.Stok}} {{$elem.Satuan}}</td>
-                            <td>{{$elem.Kategori}}</td>
+                            <td>{{$elem.Stok}} {{$elem.Satuan.String}}</td>
+                            <td>
+                                {{if eq $elem.Kategori.String ""}}
+                                    Kategori Tidak ditemukan
+                                {{else}}
+                                    {{$elem.Kategori.String}}
+                                {{end}}
+                            </td>
                             <td class="table-actions">
                                 <a href="/edit-barang/{{$elem.IdBarang}}" class="table-action" data-toggle="tooltip" data-original-title="Edit Barang">
                                     <i class="fas fa-user-edit"></i>

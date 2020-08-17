@@ -56,7 +56,9 @@
                         {{range $index,$elem := .satuan}}
                         <tr>
                             <td class="index">{{$index}}</td>
-                            <td>{{$elem.NamaSatuan}}</td>
+                            <td>
+                                {{$elem.NamaSatuan}}
+                            </td>
                             <td class="table-actions">
                                 <a href="/edit-satuan/{{$elem.IdSatuan}}" class="table-action" data-toggle="tooltip" data-original-title="Edit Satuan">
                                     <i class="fas fa-user-edit"></i>
@@ -94,7 +96,7 @@
                     <table class="table align-items-center table-flush table-striped">
                         <thead class="thead-light">
                         <tr>
-                            <th width="5%">No</th>
+                            <th width="2%">No</th>
                             <th>Nama Kategori</th>
                             <th>Nama Satuan</th>
                             <th></th>
@@ -110,7 +112,13 @@
                         <tr>
                             <td class="index">{{$index}}</td>
                             <td>{{$elem.NamaKategori}}</td>
-                            <td>{{$elem.Satuan}}</td>
+                            <td>
+                                {{if eq $elem.Satuan.String ""}}
+                                    Satuan Not Found
+                                {{else}}
+                                {{$elem.Satuan.String}}
+                                {{end}}
+                            </td>
                             <td class="table-actions">
                                 <a href="/edit-kategori/{{$elem.IdKategori}}" class="table-action" data-toggle="tooltip" data-original-title="Edit Kategori">
                                     <i class="fas fa-user-edit"></i>

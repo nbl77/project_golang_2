@@ -4,6 +4,7 @@ import (
 	"Inventory_Project/config"
 	"Inventory_Project/cookie_conf"
 	"Inventory_Project/db"
+	"database/sql"
 	"github.com/labstack/echo/v4"
 	"log"
 	"net/http"
@@ -12,13 +13,13 @@ type Barang struct {
 	IdBarang string
 	NamaBarang string
 	Stok int
-	Kategori string
-	Satuan string
+	Kategori sql.NullString
+	Satuan sql.NullString
 }
 type Kategori struct {
 	IdKategori string
 	NamaKategori string
-	Satuan string
+	Satuan sql.NullString
 }
 type Satuan struct {
 	IdSatuan string
@@ -111,12 +112,7 @@ func EditBarang(ctx echo.Context) error {
 	IdBarang := ctx.Param("id")
 	NamaBarang := ctx.FormValue("barang")
 	Kategori := ctx.FormValue("kategori")
-	data := []interface{}{
-		NamaBarang,
-		Kategori,
-		IdBarang,
-	}
-	res,err := db.Execute("UPDATE barang SET nama_barang=?,id_kategori=? WHERE id_barang=?",data)
+	res,err := db.Execute("UPDATE barang SET nama_barang=?,id_kategori=? WHERE id_barang=?",NamaBarang,Kategori,IdBarang)
 	if err != nil {
 		log.Println(err)
 	}

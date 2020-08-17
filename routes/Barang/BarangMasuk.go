@@ -5,6 +5,7 @@ import (
 	"Inventory_Project/cookie_conf"
 	"Inventory_Project/db"
 	"Inventory_Project/db/service"
+	"database/sql"
 	"github.com/labstack/echo/v4"
 	"log"
 	"net/http"
@@ -14,7 +15,7 @@ import (
 type BarangMasuk struct {
 	IdBarangMasuk string
 	NamaBarang      string
-	NamaSupplier    string
+	NamaSupplier    sql.NullString
 	JumlahMasuk   string
 	WaktuMasuk    string
 }

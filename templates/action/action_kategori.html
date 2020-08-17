@@ -48,7 +48,7 @@
                                     {{if not .satuan}}
                                         <option value="" disabled selected>Tidak Ada data</option>
                                     {{else}}
-                                        {{$IdSatuan := .kategori.Satuan}}
+                                        {{$IdSatuan := .kategori.Satuan.String}}
                                         <option value="" disabled>Pilih Satuan</option>
                                         {{range $index,$elem := .satuan}}
                                             <option value="{{$elem.IdSatuan}}" {{if eq $elem.IdSatuan $IdSatuan}} selected{{end}}>{{$elem.NamaSatuan}}</option>

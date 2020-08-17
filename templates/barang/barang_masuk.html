@@ -60,7 +60,13 @@
                         <tr>
                             <td class="index">{{$index}}</td>
                             <td>{{$elem.NamaBarang}}</td>
-                            <td>{{$elem.NamaSupplier}}</td>
+                            <td>
+                                {{if eq $elem.NamaSupplier.String ""}}
+                                    Supplier Tidak ditemukan
+                                {{else}}
+                                    {{$elem.NamaSupplier.String}}
+                                {{end}}
+                            </td>
                             <td>{{$elem.JumlahMasuk}}</td>
                             <td>{{$elem.WaktuMasuk}}</td>
                             <td class="table-actions">

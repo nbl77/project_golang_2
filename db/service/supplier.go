@@ -18,6 +18,8 @@ type Supplier struct {
 	NamaSupplier string
 	Alamat       string
 	NoTelp       string
+	TotalMasuk string
+	LastInsert string
 }
 
 
@@ -104,10 +106,10 @@ func EditSupplier(data Supplier)Message{
 }
 
 func ShowAllSupplier()[]Supplier{
-	db := db.Connect()
-	defer db.Close()
+	db2 := db.Connect()
+	defer db2.Close()
 
-	selDB,err := db.Query("SELECT * FROM supplier ORDER BY id_supplier DESC")
+	selDB,err := db2.Query("SELECT supplier.* FROM supplier ORDER BY id_supplier DESC")
 	if err != nil {
 		log.Fatalf("Terjadi error terkait Show All Supplier karena: ", err)
 	}
@@ -116,20 +118,28 @@ func ShowAllSupplier()[]Supplier{
 	suppList:= []Supplier{}
 
 	for selDB.Next(){
-		var id_supplier string
-		var nama_supplier string
-		var no_telp string
+		var idSupplier string
+		var namaSupplier string
+		var noTelp string
 		var alamat string
-
-		err = selDB.Scan(&id_supplier, &nama_supplier,&no_telp, &alamat)
+		var totalBarang sql.NullString
+		var lastInsert sql.NullString
+		err = selDB.Scan(&idSupplier, &namaSupplier,&noTelp, &alamat)
+		db.SelectParam("SELECT SUM(jumlah_masuk),MAX(waktu_masuk) FROM barang_masuk WHERE id_supplier=?", idSupplier).Scan(&totalBarang,&lastInsert)
 		if err != nil {
 			fmt.Println("Supplier List nil karena ada error saat scan " + err.Error())
 		}
 
-		supp.IdSupplier = id_supplier
-		supp.NamaSupplier = nama_supplier
+		supp.IdSupplier = idSupplier
+		supp.NamaSupplier = namaSupplier
 		supp.Alamat = alamat
-		supp.NoTelp = no_telp
+		supp.NoTelp = noTelp
+		if totalBarang.Valid {
+			supp.TotalMasuk = totalBarang.String
+		}
+		if lastInsert.Valid {
+			supp.LastInsert = lastInsert.String
+		}
 
 		suppList = append(suppList, supp)
 	}

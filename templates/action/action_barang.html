@@ -36,8 +36,8 @@
                             </a>
                         </div>
                     </div>
-                    {{$IdKategori := .data.Kategori}}
-                    {{$IdSatuan := .data.Satuan}}
+                    {{$IdKategori := .data.Kategori.String}}
+                    {{$IdSatuan := .data.Satuan.String}}
                     <div class="card-body">
                         <form action="/edit-barang-action/{{.data.IdBarang}}" method="post">
                             <div class="form-group">

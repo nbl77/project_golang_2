@@ -46,7 +46,7 @@
                             <th>Nama Supplier</th>
                             <th>No Telepon</th>
                             <th>Alamat</th>
-                            <th>Total Pemasukan</th>
+                            <th>Total Masuk</th>
                             <th>Terakahir Memasukan</th>
                             <th></th>
                         </tr>
@@ -63,8 +63,20 @@
                             <td>{{$elem.NamaSupplier}}</td>
                             <td>{{$elem.NoTelp}}</td>
                             <td>{{$elem.Alamat}}</td>
-                            <td>0</td>
-                            <td>18-10-2020</td>
+                            <td>
+                                {{if eq $elem.TotalMasuk ""}}
+                                    Belum memasukan Barang
+                                {{else}}
+                                    {{$elem.TotalMasuk}}
+                                {{end}}
+                            </td>
+                            <td>
+                                {{if eq $elem.LastInsert ""}}
+                                    Belum memasukan Barang
+                                {{else}}
+                                    {{$elem.LastInsert}}
+                                {{end}}
+                            </td>
                             <td class="table-actions">
                                 <a href="/edit-supplier/{{$elem.IdSupplier}}" class="table-action" data-toggle="tooltip" data-original-title="Edit Supplier">
                                     <i class="fas fa-user-edit"></i>

@@ -17,11 +17,11 @@ type Supplier struct {
 }
 
 func SupplierMaster(ctx echo.Context) error {
-	data_supplier := service.ShowAllSupplier()
+	dataSupplier := service.ShowAllSupplier()
 	data := &config.M{
-		"title": "Supplier",
-		"path": "supplier",
-		"data":data_supplier,
+		"title":      "Supplier",
+		"path":       "supplier",
+		"data":       dataSupplier,
 		"alert":      cookie_conf.CookieExist(ctx, "alert"),
 		"alert_data": cookie_conf.GetCookieAlert(ctx),
 	}
