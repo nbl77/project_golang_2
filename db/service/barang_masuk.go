@@ -2,40 +2,39 @@ package service
 
 import (
 	"Inventory_Project/db"
-	"fmt"
 	"database/sql"
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
-	"time"
-	
+
 	"net/http"
 )
 
 type BarangMasuk struct {
-	Id_barang_masuk int
-	Id_barang int
-	Id_supplier int
-	Jumlah_masuk int
-	Waktu_masuk time.Time
+	IdBarangMasuk string
+	IdBarang      string
+	IdSupplier    string
+	JumlahMasuk   string
+	WaktuMasuk    string
 }
 
 
-func Insert_barang_masuk(data BarangMasuk)Message{
+func InsertBarangMasuk(data BarangMasuk)Message{
 	db:= db.Connect()
 	defer db.Close()
 	fmt.Println("Tambah Barang Masuk")
 
 	var(
-		id_barang int
-		id_supplier int
-		jumlah_masuk int
-		waktu_masuk time.Time
+		id_barang string
+		id_supplier string
+		jumlah_masuk string
+		waktu_masuk string
 	)
 
-	id_barang = data.Id_barang
-	id_supplier = data.Id_supplier
-	jumlah_masuk = data.Jumlah_masuk
-	waktu_masuk = data.Waktu_masuk
+	id_barang = data.IdBarang
+	id_supplier = data.IdSupplier
+	jumlah_masuk = data.JumlahMasuk
+	waktu_masuk = data.WaktuMasuk
 
 	insert,err := db.Prepare("INSERT INTO barang_masuk(id_barang, id_supplier, jumlah_masuk, waktu_masuk) VALUES(?,?,?,?)")
 	if err != nil {
@@ -49,34 +48,34 @@ func Insert_barang_masuk(data BarangMasuk)Message{
 	insert.Exec(id_barang, id_supplier, jumlah_masuk, waktu_masuk)
 	
 	message:=Message{}
-	message.Status=http.StatusNotFound
+	message.Status=http.StatusOK
 	message.Message = "Sukses insert barang masuk"
 
 
 	return message
 }
 
-func Edit_barang_masuk(data BarangMasuk)Message{
+func EditBarangMasuk(data BarangMasuk)Message{
 	db:= db.Connect()
 	defer db.Close()
 	fmt.Println("Edit Barang Masuk")
 
 	var (
-		id_barang_masuk int
-		id_barang int
-		id_supplier int
-		jumlah_masuk int
-		waktu_masuk time.Time
+		idBarangMasuk string
+		idBarang      string
+		idSupplier    string
+		jumlahMasuk   string
+		waktuMasuk    string
 	)
 
-	id_barang_masuk = data.Id_barang_masuk
+	idBarangMasuk = data.IdBarangMasuk
 
-	if FindBarangMasuk(id_barang_masuk) {
+	if FindBarangMasuk(idBarangMasuk) {
 
-		id_barang = data.Id_barang
-		id_supplier = data.Id_supplier
-		jumlah_masuk = data.Jumlah_masuk
-		waktu_masuk = data.Waktu_masuk
+		idBarang = data.IdBarang
+		idSupplier = data.IdSupplier
+		jumlahMasuk = data.JumlahMasuk
+		waktuMasuk = data.WaktuMasuk
 
 
 		update,err := db.Prepare("UPDATE barang_masuk SET id_barang=?, id_supplier=?, jumlah_masuk =?, waktu_masuk = ? WHERE id_barang_masuk = ?")
@@ -92,23 +91,16 @@ func Edit_barang_masuk(data BarangMasuk)Message{
 		message.Status=http.StatusOK
 		message.Message = "Sukses input barang masuk"
 		fmt.Println(err)
-		update.Exec(id_barang,id_supplier,jumlah_masuk,waktu_masuk,id_barang_masuk)
+		update.Exec(idBarang, idSupplier, jumlahMasuk, waktuMasuk, idBarangMasuk)
 
 		return message
 	
 		
-	} else {
-		message:=Message{}
-		message.Status=http.StatusNotFound
-		message.Message = "Ada error karena id tidak ada didatabase untuk edit barng masuk"
-		
-
-		return message
 	}
-
 	message:=Message{}
 	message.Status=http.StatusNotFound
-	message.Message = "tidak input apa apa untuk edit barang masuk"
+	message.Message = "Ada error karena id tidak ada didatabase untuk edit barng masuk"
+
 
 	return message
 
@@ -131,22 +123,22 @@ func ShowAllBarangMasuk()[]BarangMasuk{
 
 
 	for selDB.Next(){
-		var id_barang_masuk int
-		var id_barang int
-		var id_supplier int
-		var jumlah_masuk int
-		var waktu_masuk time.Time
+		var idBarangMasuk string
+		var idBarang string
+		var idSupplier string
+		var jumlah_masuk string
+		var waktuMasuk string
 
-		err = selDB.Scan(&id_barang_masuk, &id_barang, &id_supplier, &jumlah_masuk, &waktu_masuk)
+		err = selDB.Scan(&idBarangMasuk, &idBarang, &idSupplier, &jumlah_masuk, &waktuMasuk)
 		if err != nil {
 			log.Fatalf("Terjadi error terkait scan Show All Barang Masuk karena: ",err)
 		}
 
-		barangMasuk.Id_barang_masuk = id_barang_masuk
-		barangMasuk.Id_barang = id_barang
-		barangMasuk.Id_supplier = id_supplier
-		barangMasuk.Jumlah_masuk = jumlah_masuk
-		barangMasuk.Waktu_masuk = waktu_masuk
+		barangMasuk.IdBarangMasuk = idBarangMasuk
+		barangMasuk.IdBarang = idBarang
+		barangMasuk.IdSupplier = idSupplier
+		barangMasuk.JumlahMasuk = jumlah_masuk
+		barangMasuk.WaktuMasuk = waktuMasuk
 
 		barangMasukList = append(barangMasukList, barangMasuk)
 	}
@@ -163,11 +155,11 @@ func ShowPerBarangMasuk(data BarangMasuk) BarangMasuk{
 	defer db.Close()
 
 	var (
-		id_barang_masuk int
+		id_barang_masuk string
 	)
 	barMas:= BarangMasuk{}
 
-	id_barang_masuk = data.Id_barang_masuk
+	id_barang_masuk = data.IdBarangMasuk
 
 	if FindBarangMasuk(id_barang_masuk) {
 
@@ -180,11 +172,11 @@ func ShowPerBarangMasuk(data BarangMasuk) BarangMasuk{
 	
 
 	for selDB.Next(){
-		var id_barang_masuk1 int
-		var id_barang int
-		var id_supplier int
-		var jumlah_masuk int
-		var waktu_masuk time.Time
+		var id_barang_masuk1 string
+		var id_barang string
+		var id_supplier string
+		var jumlah_masuk string
+		var waktu_masuk string
 
 		err = selDB.Scan(&id_barang_masuk1, &id_barang, &id_supplier, &jumlah_masuk, &waktu_masuk)
 		if err != nil {
@@ -192,11 +184,11 @@ func ShowPerBarangMasuk(data BarangMasuk) BarangMasuk{
 			return barMas
 		}
 
-		barMas.Id_barang_masuk = id_barang_masuk1
-		barMas.Id_barang = id_barang
-		barMas.Id_supplier = id_supplier
-		barMas.Jumlah_masuk = jumlah_masuk
-		barMas.Waktu_masuk = waktu_masuk
+		barMas.IdBarangMasuk = id_barang_masuk1
+		barMas.IdBarang = id_barang
+		barMas.IdSupplier = id_supplier
+		barMas.JumlahMasuk = jumlah_masuk
+		barMas.WaktuMasuk = waktu_masuk
 	}
 
 	return barMas
@@ -211,14 +203,14 @@ func ShowPerBarangMasuk(data BarangMasuk) BarangMasuk{
 	//hhahahaha
 }
 
-func Delete_barang_masuk(data BarangMasuk)Message{
+func DeleteBarangMasuk(data BarangMasuk)Message{
 	db :=db.Connect()
 	defer db.Close()
 
-	var id_barang_masuk int
+	var id_barang_masuk string
 	fmt.Println("Masukkan id")
 
-	id_barang_masuk =data.Id_barang_masuk
+	id_barang_masuk =data.IdBarangMasuk
 
 
 	if FindBarangMasuk(id_barang_masuk){
@@ -239,34 +231,22 @@ func Delete_barang_masuk(data BarangMasuk)Message{
 		fmt.Println(err)
 
 		return message
-	} else {
-		message:=Message{}
-		message.Status=http.StatusNotFound
-		message.Message = "Id tidak ada di database saat mau menghapus barang masuk"
-		return message
 	}
-
 	message:=Message{}
-		message.Status=http.StatusNotFound
-		message.Message = "Tidak input apa apa terkait delete barang masuk"
-		
-
-		return message
-	
-	
-
-
+	message.Status=http.StatusNotFound
+	message.Message = "Id tidak ada di database saat mau menghapus barang masuk"
+	return message
 }
 
 
-func FindBarangMasuk(id_barang_masuk int) bool{
+func FindBarangMasuk(id_barang_masuk string) bool{
 	db:=db.Connect()
 	defer db.Close()
 
 	row := db.QueryRow("SELECT * FROM barang_masuk WHERE id_barang_masuk = ?", id_barang_masuk)
 
 	bar := BarangMasuk{}
-	err:= row.Scan(&bar.Id_barang_masuk, &bar.Id_barang, &bar.Id_supplier, &bar.Jumlah_masuk, &bar.Waktu_masuk)
+	err:= row.Scan(&bar.IdBarangMasuk, &bar.IdBarang, &bar.IdSupplier, &bar.JumlahMasuk, &bar.WaktuMasuk)
 
 	switch {
 	case err == sql.ErrNoRows:

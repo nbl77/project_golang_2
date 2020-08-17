@@ -10,10 +10,10 @@ import (
 	"strconv"
 )
 type Supplier struct {
-	Id_supplier int
-	Nama_supplier string
-	Alamat string
-	NoTelp string
+	IdSupplier   string
+	NamaSupplier string
+	Alamat       string
+	NoTelp       string
 }
 
 func SupplierMaster(ctx echo.Context) error {
@@ -47,7 +47,8 @@ func PostSupplier(ctx echo.Context) error {
 	}
 	mess := service.InsertSupplier(data)
 	if mess.Status == http.StatusOK {
-		cookie_conf.SetCookieAlert(ctx,"success","Berhasil Menambah Supplier!")
+		cookie_conf.SetCookieAlert(ctx, "success","Berhasil Menambah Supplier!")
+		log.Println("Menambahkan Supplier")
 		return ctx.Redirect(http.StatusFound,"/supplier")
 	}
 	cookie_conf.SetCookieAlert(ctx,"danger","Gagal Menambah Supplier!")

@@ -45,57 +45,35 @@
                             <th width="5%">No</th>
                             <th>Nama Barang</th>
                             <th>Supplier</th>
-                            <th>Stok</th>
+                            <th>Jumlah</th>
                             <th>Tanggal Masuk</th>
                             <th></th>
                         </tr>
                         </thead>
                         <tbody>
+                        {{if not .data}}
+                            <tr>
+                                <td colspan="6"><center>No data available yet</center></td>
+                            </tr>
+                        {{else}}
+                        {{range $index,$elem := .data}}
                         <tr>
-                            <td>1</td>
-                            <td>Air Mineral</td>
-                            <td>CV. Jono</td>
-                            <td>50</td>
-                            <td>18-august-2020</td>
+                            <td class="index">{{$index}}</td>
+                            <td>{{$elem.NamaBarang}}</td>
+                            <td>{{$elem.NamaSupplier}}</td>
+                            <td>{{$elem.JumlahMasuk}}</td>
+                            <td>{{$elem.WaktuMasuk}}</td>
                             <td class="table-actions">
-                                <a href="#!" class="table-action" data-toggle="tooltip" data-original-title="Edit product">
+                                <a href="/edit-barang-masuk/{{$elem.IdBarangMasuk}}" class="table-action" data-toggle="tooltip" data-original-title="Edit Barang">
                                     <i class="fas fa-user-edit"></i>
                                 </a>
-                                <a href="#!" class="table-action table-action-delete" data-toggle="tooltip" data-original-title="Delete product">
+                                <a href="/delete-barang-masuk/{{$elem.IdBarangMasuk}}" class="table-action table-action-delete" data-toggle="sweet-alert" data-sweet-alert="confirm" data-title="Warning" data-message="Are you sure you want to delete?">
                                     <i class="fas fa-trash"></i>
                                 </a>
                             </td>
                         </tr>
-                        <tr>
-                            <td>1</td>
-                            <td>Air Mineral</td>
-                            <td>CV. Jono</td>
-                            <td>50</td>
-                            <td>18-august-2020</td>
-                            <td class="table-actions">
-                                <a href="#!" class="table-action" data-toggle="tooltip" data-original-title="Edit product">
-                                    <i class="fas fa-user-edit"></i>
-                                </a>
-                                <a href="#!" class="table-action table-action-delete" data-toggle="tooltip" data-original-title="Delete product">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td>Air Mineral</td>
-                            <td>CV. Jono</td>
-                            <td>50</td>
-                            <td>18-august-2020</td>
-                            <td class="table-actions">
-                                <a href="#!" class="table-action" data-toggle="tooltip" data-original-title="Edit product">
-                                    <i class="fas fa-user-edit"></i>
-                                </a>
-                                <a href="#!" class="table-action table-action-delete" data-toggle="tooltip" data-original-title="Delete product">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
+                        {{end}}
+                        {{end}}
                         </tbody>
                     </table>
                 </div>
@@ -108,6 +86,7 @@
 <div class="modal fade" id="modal-barang-masuk" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
     <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
         <div class="modal-content">
+            <form action="/post-barang-masuk" method="post">
             <div class="modal-header">
                 <h6 class="modal-title" id="modal-title-default">Tambah Barang Masuk</h6>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -115,39 +94,45 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="">
-                  <div class="form-group">
-                      <label for="barang">Nama Barang :</label>
-                      <select class="form-control form-control-sm" name="barang">
-                        <option value="minuman">Minuman</option>
-                        <option value="material">Material</option>
-                      </select>
-                  </div>
-                    <div class="form-group">
-                        <label for="kategori">Supplier :</label>
-                        <select name="kategori" id="kategori" class="form-control form-control-sm">
-                            <option value="minuman">Minuman</option>
-                            <option value="makanan">Makanan</option>
-                            <option value="material">Material</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="jumlah">Jumlah :</label>
-                        <input type="number" name="jumlah" id="jumlah" class="form-control form-control-sm" placeholder="Jumlah">
-                    </div>
-                    <div class="form-group">
-                        <label for="kategori">Kategori :</label>
-                        <select name="kategori" id="kategori" class="form-control form-control-sm">
-                            <option value="minuman">Minuman</option>
-                            <option value="makanan">Makanan</option>
-                            <option value="material">Material</option>
-                        </select>
-                    </div>
-                </form>
+                <div class="form-group">
+                    <label for="barang">Nama Barang :</label>
+                    <select class="form-control form-control-sm" name="barang" required>
+                        {{if not .barang}}
+                            <option value="" disabled selected>Tidak ada data</option>
+                        {{else}}
+                            <option value="" selected disabled>Pilih Barang</option>
+                            {{range $index,$elem := .barang}}
+                                <option value="{{$elem.IdBarang}}">{{$elem.NamaBarang}}</option>
+                            {{end}}
+                        {{end}}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tanggal_masuk">Tanggal Masuk :</label>
+                    <input type="date" name="tanggal_masuk" class="form-control form-control-sm" id="tanggal_masuk" placeholder="Masukan Tanggal masuk" required>
+                </div>
+                <div class="form-group">
+                    <label for="supplier">Supplier :</label>
+                    <select name="supplier" id="supplier" class="form-control form-control-sm" required>
+                        {{if not .supplier}}
+                            <option value="" disabled selected>Tidak ada data</option>
+                        {{else}}
+                            <option value="" selected disabled>Pilih Supplier</option>
+                            {{range $index,$elem := .supplier}}
+                                <option value="{{$elem.IdSupplier}}">{{$elem.NamaSupplier}}</option>
+                            {{end}}
+                        {{end}}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="jumlah">Jumlah :</label>
+                    <input type="number" name="jumlah" id="jumlah" class="form-control form-control-sm" placeholder="Jumlah" required>
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary">Simpan</button>
+                <button type="submit" class="btn btn-primary">Simpan</button>
             </div>
+            </form>
         </div>
     </div>
 </div>

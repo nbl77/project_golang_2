@@ -105,21 +105,25 @@ func Routes(e *echo.Echo)  {
 	e.POST("/post-satuan",Barang.PostSatuan)
 	e.POST("/post-kategori",Barang.PostKategori)
 	e.POST("/post-supplier",Barang.PostSupplier)
+	e.POST("/post-barang-masuk",Barang.PostbarangMasuk)
 	//EDIT
 	e.GET("/edit-barang/:id",Barang.ShowEditBarang)
 	e.GET("/edit-satuan/:id",Barang.ShowEditSatuan)
 	e.GET("/edit-kategori/:id",Barang.ShowEditKategori)
 	e.GET("/edit-supplier/:id",Barang.ShowEditSupplier)
+	e.GET("/edit-barang-masuk/:id",Barang.ShowEditBarangMasuk)
 	//EDIT ACTION
 	e.POST("/edit-barang-action/:id",Barang.EditBarang)
 	e.POST("/edit-kategori-action/:id",Barang.EditKategori)
 	e.POST("/edit-satuan-action/:id",Barang.EditSatuan)
 	e.POST("/edit-supplier-action/:id",Barang.EditSupplier)
+	e.POST("/edit-barang-masuk-action/:id",Barang.EditBarangMasuk)
 	//DELETE
 	e.GET("/delete-barang/:id",Barang.DeleteBarang)
 	e.GET("/delete-kategori/:id",Barang.DeleteKategori)
 	e.GET("/delete-satuan/:id",Barang.DeleteSatuan)
 	e.GET("/delete-supplier/:id",Barang.DeleteSupplier)
+	e.GET("/delete-barang-masuk/:id",Barang.DeleteBarangMasuk)
 	//Laporan
 	e.GET("/laporan",Laporan.Laporan)
 }
