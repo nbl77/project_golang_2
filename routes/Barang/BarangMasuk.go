@@ -8,6 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 type BarangMasuk struct {
@@ -67,6 +68,7 @@ func PostbarangMasuk(ctx echo.Context) error {
 	}
 	mess := service.InsertBarangMasuk(data)
 	if mess.Status == http.StatusOK {
+		db.Execute("UPDATE barang SET stok= ? + stok WHERE id_barang=?",data.JumlahMasuk,data.IdBarang)
 		cookie_conf.SetCookieAlert(ctx,"success","Berhasil Menambahkan barang!")
 		log.Println("Menambah data barang masuk")
 		return ctx.Redirect(http.StatusFound,"/barang-masuk")
@@ -75,9 +77,21 @@ func PostbarangMasuk(ctx echo.Context) error {
 	return ctx.Redirect(http.StatusFound,"/barang-masuk")
 }
 func DeleteBarangMasuk(ctx echo.Context) error {
+	var currJmlMasuk int
+	var idBarang int
+	var stok int
 	IdBarangMasuk := service.BarangMasuk{IdBarangMasuk: ctx.Param("id")}
+	rowBarangKeluar := db.SelectParam("SELECT jumlah_masuk,id_barang FROM barang_masuk WHERE id_barang_masuk=?",IdBarangMasuk.IdBarangMasuk)
+	rowBarangKeluar.Scan(&currJmlMasuk,&idBarang)
+	rowBarang := db.SelectParam("SELECT stok FROM barang WHERE id_barang=?", idBarang)
+	rowBarang.Scan(&stok)
+	if stok < currJmlMasuk {
+		cookie_conf.SetCookieAlert(ctx,"danger","Jumlah Barang Kurang!")
+		return ctx.Redirect(http.StatusFound,"/barang-masuk")
+	}
 	mess := service.DeleteBarangMasuk(IdBarangMasuk)
 	if mess.Status == http.StatusOK {
+		db.Execute("UPDATE barang SET stok=stok - ? WHERE id_barang=?",currJmlMasuk,idBarang)
 		cookie_conf.SetCookieAlert(ctx,"success","Berhasil Menghapus barang!")
 		log.Println("Menghapus data barang masuk")
 		return ctx.Redirect(http.StatusFound,"/barang-masuk")
@@ -132,13 +146,27 @@ func EditBarangMasuk(ctx echo.Context) error {
 		JumlahMasuk:   ctx.FormValue("jumlah"),
 		WaktuMasuk: ctx.FormValue("tanggal_masuk"),
 	}
+	var JmlSkrg int
+	var stok int
+	rowBarangMasuk := db.SelectParam("SELECT jumlah_masuk FROM barang_masuk WHERE id_barang_masuk=?",data.IdBarangMasuk)
+	rowBarangMasuk.Scan(&JmlSkrg)
+	newJml,_ := strconv.Atoi(data.JumlahMasuk)
+	rowBarang := db.SelectParam("SELECT stok FROM barang WHERE id_barang=?",data.IdBarang)
+	rowBarang.Scan(&stok)
+	selisih := newJml - JmlSkrg
+	if stok + selisih < 0  {
+		cookie_conf.SetCookieAlert(ctx,"danger","Jumlah Barang Kurang!")
+		return ctx.Redirect(http.StatusFound,"/barang-masuk")
+	}
 	mess := service.EditBarangMasuk(data)
 	if mess.Status == http.StatusOK {
+
+		db.Execute("UPDATE barang SET stok=stok + ? WHERE id_barang=?",selisih,data.IdBarang)
 		cookie_conf.SetCookieAlert(ctx,"success","Berhasil Mengubah barang!")
 		log.Println("Mengubah data barang masuk")
 		return ctx.Redirect(http.StatusFound,"/barang-masuk")
 	}
-	cookie_conf.SetCookieAlert(ctx,"danger","Gagal Mengubah barang!")
+	cookie_conf.SetCookieAlert(ctx,"danger","Data Barang Tidak Di temukan!")
 	return ctx.Redirect(http.StatusFound,"/barang-masuk")
 
 }

@@ -2,35 +2,33 @@ package service
 
 import (
 	"Inventory_Project/db"
+	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
-	"time"
-	"database/sql"
-
 
 	"net/http"
 )
 
 type BarangKeluar struct {
-	Id_barang_keluar int
-	Id_barang int
-	Alamat string
-	Jumlah_keluar int
-	Waktu_keluar time.Time
+	IdBarangKeluar string
+	IdBarang       string
+	Alamat         string
+	JumlahKeluar   string
+	WaktuKeluar    string
 }
 
 
-func Insert_barang_keluar(data BarangKeluar)Message{
+func InsertBarangKeluar(data BarangKeluar)Message{
 	db:= db.Connect()
 	defer db.Close()
 	fmt.Println("Tambah Barang Keluar")
 
 	var(
-		id_barang int
+		id_barang string
 		alamat string
-		jumlah_keluar int
-		waktu_keluar time.Time
+		jumlah_keluar string
+		waktu_keluar string
 	)
 
 	// fmt.Println("Masukkan id barang")
@@ -44,10 +42,10 @@ func Insert_barang_keluar(data BarangKeluar)Message{
 
 	// currentTime := time.Now()
 
-	id_barang = data.Id_barang
+	id_barang = data.IdBarang
 	alamat = data.Alamat
-	jumlah_keluar = data.Jumlah_keluar
-	waktu_keluar = data.Waktu_keluar
+	jumlah_keluar = data.JumlahKeluar
+	waktu_keluar = data.WaktuKeluar
 
 	insert,err := db.Prepare("INSERT INTO barang_keluar(id_barang, alamat, jumlah_keluar, waktu_keluar) VALUES(?,?,?,?)")
 	if err != nil {
@@ -72,32 +70,28 @@ func Insert_barang_keluar(data BarangKeluar)Message{
 
 }
 
-func Edit_barang_keluar(data BarangKeluar)Message{
+func EditBarangKeluar(data BarangKeluar)Message{
 	db:= db.Connect()
 	defer db.Close()
 	fmt.Println("Edit Barang Masuk")
 
 	var (
-		id_barang_keluar int
-		id_barang int
+		id_barang_keluar string
+		id_barang string
 		alamat string
-		jumlah_keluar int
-		waktu_keluar time.Time
+		jumlah_keluar string
+		waktu_keluar string
 	)
-
-
-
-	id_barang_keluar = data.Id_barang_keluar
-
+	id_barang_keluar = data.IdBarangKeluar
 
 	if FindBarangKeluar(id_barang_keluar) {
-		id_barang = data.Id_barang
+		id_barang = data.IdBarang
 		alamat = data.Alamat
-		jumlah_keluar = data.Jumlah_keluar
-		waktu_keluar = data.Waktu_keluar
+		jumlah_keluar = data.JumlahKeluar
+		waktu_keluar = data.WaktuKeluar
 	
 	
-		update,err := db.Prepare("UPDATE barang_keluar SET id_barang=?, alamat=?, jumlah_keluar =? , waktu_keluar = ?WHERE id_barang_keluar = ?")
+		update,err := db.Prepare("UPDATE barang_keluar SET id_barang=?, alamat=?, jumlah_keluar =? , waktu_keluar = ? WHERE id_barang_keluar = ?")
 		if err != nil {
 			message:=Message{}
 			message.Status=http.StatusBadRequest
@@ -114,19 +108,11 @@ func Edit_barang_keluar(data BarangKeluar)Message{
 
 		return message
 	
-	} else {
-
-		message:=Message{}
-		message.Status=http.StatusBadRequest
-		message.Message = "Id tidak ada"
-		
-		return message
 	}
-
-	
 	message:=Message{}
 	message.Status=http.StatusBadRequest
-	message.Message = "Tidak input apa apa untuk edit barang"
+	message.Message = "Id tidak ada"
+
 	return message
 
 }
@@ -144,23 +130,23 @@ func ShowAllBarangKeluar()[]BarangKeluar{
 	barangKeluarList:= []BarangKeluar{}
 
 	for selDB.Next(){
-		var id_barang_keluar int
-		var id_barang int
+		var idBarangKeluar string
+		var idBarang string
 		var alamat string
-		var jumlah_keluar int
-		var waktu_keluar time.Time
+		var jumlahKeluar string
+		var waktuKeluar string
 
-		err = selDB.Scan(&id_barang_keluar, &id_barang, &alamat, &jumlah_keluar, &waktu_keluar)
+		err = selDB.Scan(&idBarangKeluar, &idBarang, &alamat, &jumlahKeluar, &waktuKeluar)
 		if err != nil {
 			fmt.Println("Ada error saat scan untuk show all barang keluar karena: ", err)
 			return barangKeluarList
 		}
 
-		barangKeluar.Id_barang_keluar = id_barang_keluar
-		barangKeluar.Id_barang = id_barang
+		barangKeluar.IdBarangKeluar = idBarangKeluar
+		barangKeluar.IdBarang = idBarang
 		barangKeluar.Alamat = alamat
-		barangKeluar.Jumlah_keluar = jumlah_keluar
-		barangKeluar.Waktu_keluar = waktu_keluar
+		barangKeluar.JumlahKeluar = jumlahKeluar
+		barangKeluar.WaktuKeluar = waktuKeluar
 
 		barangKeluarList = append(barangKeluarList, barangKeluar)
 		return barangKeluarList
@@ -177,10 +163,10 @@ func ShowPerBarangKeluar(data BarangKeluar)BarangKeluar{
 	defer db.Close()
 
 	var (
-		id_barang_keluar int
+		id_barang_keluar string
 	)
 
-	id_barang_keluar = data.Id_barang_keluar
+	id_barang_keluar = data.IdBarangKeluar
 
 	is_exist := FindBarangKeluar(id_barang_keluar)
 
@@ -195,11 +181,11 @@ func ShowPerBarangKeluar(data BarangKeluar)BarangKeluar{
 	
 	
 		for selDB.Next(){
-			var id_barang_keluar1 int
-			var id_barang int
+			var id_barang_keluar1 string
+			var id_barang string
 			var alamat string
-			var jumlah_keluar int
-			var waktu_keluar time.Time
+			var jumlah_keluar string
+			var waktu_keluar string
 	
 			err = selDB.Scan(&id_barang_keluar1, &id_barang, &alamat, &jumlah_keluar, &waktu_keluar)
 			if err != nil {
@@ -207,11 +193,11 @@ func ShowPerBarangKeluar(data BarangKeluar)BarangKeluar{
 				return barKel
 			}
 
-			barKel.Id_barang_keluar = id_barang_keluar1
-			barKel.Id_barang = id_barang
+			barKel.IdBarangKeluar = id_barang_keluar1
+			barKel.IdBarang = id_barang
 			barKel.Alamat = alamat
-			barKel.Jumlah_keluar = jumlah_keluar
-			barKel.Waktu_keluar = waktu_keluar
+			barKel.JumlahKeluar = jumlah_keluar
+			barKel.WaktuKeluar = waktu_keluar
 			
 		}
 		return barKel
@@ -229,13 +215,13 @@ func ShowPerBarangKeluar(data BarangKeluar)BarangKeluar{
 
 }
 
-func Delete_barang_keluar(data BarangKeluar)Message{
+func DeleteBarangKeluar(data BarangKeluar)Message{
 	db :=db.Connect()
 	defer db.Close()
 
-	var id_barang_keluar int
+	var id_barang_keluar string
 
-	id_barang_keluar = data.Id_barang_keluar
+	id_barang_keluar = data.IdBarangKeluar
 
 	is_exist := FindBarangKeluar(id_barang_keluar)
 
@@ -276,14 +262,14 @@ func Delete_barang_keluar(data BarangKeluar)Message{
 	return message
 }
 
-func FindBarangKeluar(id_barang_keluar int) bool{
+func FindBarangKeluar(id_barang_keluar string) bool{
 	db:=db.Connect()
 	defer db.Close()
 
 	row := db.QueryRow("SELECT * FROM barang_keluar WHERE id_barang_keluar = ?", id_barang_keluar)
 
 	bar := BarangKeluar{}
-	err:= row.Scan(&bar.Id_barang_keluar, &bar.Id_barang, &bar.Alamat, &bar.Jumlah_keluar, &bar.Waktu_keluar)
+	err:= row.Scan(&bar.IdBarangKeluar, &bar.IdBarang, &bar.Alamat, &bar.JumlahKeluar, &bar.WaktuKeluar)
 
 	switch {
 	case err == sql.ErrNoRows:

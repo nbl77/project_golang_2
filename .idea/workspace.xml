@@ -21,13 +21,14 @@
   <component name="ChangeListManager">
     <list default="true" id="0f33d033-d82d-4d75-92b5-ce0844744bb8" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/service/barang_masuk.go" beforeDir="false" afterPath="$PROJECT_DIR$/db/service/barang_masuk.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/service/barang_keluar.go" beforeDir="false" afterPath="$PROJECT_DIR$/db/service/barang_keluar.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/Barang/BarangKeluar.go" beforeDir="false" afterPath="$PROJECT_DIR$/routes/Barang/BarangKeluar.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/Barang/BarangMasuk.go" beforeDir="false" afterPath="$PROJECT_DIR$/routes/Barang/BarangMasuk.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/Barang/Supplier.go" beforeDir="false" afterPath="$PROJECT_DIR$/routes/Barang/Supplier.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/Dashboard/Index.go" beforeDir="false" afterPath="$PROJECT_DIR$/routes/Dashboard/Index.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/Routes.go" beforeDir="false" afterPath="$PROJECT_DIR$/routes/Routes.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/action/action_barang_masuk.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/action/action_barang_masuk.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/action/action_supplier.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/action/action_supplier.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/barang/barang_masuk.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/barang/barang_masuk.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/action/action_barang_keluar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/action/action_barang_keluar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/barang/barang_keluar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/barang/barang_keluar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -94,6 +95,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -103,21 +105,21 @@
       <screen x="0" y="0" width="1280" height="720" />
     </state>
     <state x="86" y="202" key="#SQL_Dialects/0.0.1280.720@0.0.1280.720" timestamp="1597616058490" />
-    <state width="1237" height="176" key="GridCell.Tab.0.bottom" timestamp="1597623002440">
+    <state width="1237" height="176" key="GridCell.Tab.0.bottom" timestamp="1597652673482">
       <screen x="0" y="0" width="1280" height="720" />
     </state>
-    <state width="1237" height="176" key="GridCell.Tab.0.bottom/0.0.1280.720@0.0.1280.720" timestamp="1597623002440" />
-    <state width="1237" height="176" key="GridCell.Tab.0.center" timestamp="1597623002440">
+    <state width="1237" height="176" key="GridCell.Tab.0.bottom/0.0.1280.720@0.0.1280.720" timestamp="1597652673482" />
+    <state width="1237" height="176" key="GridCell.Tab.0.center" timestamp="1597652673482">
       <screen x="0" y="0" width="1280" height="720" />
     </state>
-    <state width="1237" height="176" key="GridCell.Tab.0.center/0.0.1280.720@0.0.1280.720" timestamp="1597623002440" />
-    <state width="1237" height="176" key="GridCell.Tab.0.left" timestamp="1597623002440">
+    <state width="1237" height="176" key="GridCell.Tab.0.center/0.0.1280.720@0.0.1280.720" timestamp="1597652673482" />
+    <state width="1237" height="176" key="GridCell.Tab.0.left" timestamp="1597652673482">
       <screen x="0" y="0" width="1280" height="720" />
     </state>
-    <state width="1237" height="176" key="GridCell.Tab.0.left/0.0.1280.720@0.0.1280.720" timestamp="1597623002440" />
-    <state width="1237" height="176" key="GridCell.Tab.0.right" timestamp="1597623002440">
+    <state width="1237" height="176" key="GridCell.Tab.0.left/0.0.1280.720@0.0.1280.720" timestamp="1597652673482" />
+    <state width="1237" height="176" key="GridCell.Tab.0.right" timestamp="1597652673482">
       <screen x="0" y="0" width="1280" height="720" />
     </state>
-    <state width="1237" height="176" key="GridCell.Tab.0.right/0.0.1280.720@0.0.1280.720" timestamp="1597623002440" />
+    <state width="1237" height="176" key="GridCell.Tab.0.right/0.0.1280.720@0.0.1280.720" timestamp="1597652673482" />
   </component>
 </project>
